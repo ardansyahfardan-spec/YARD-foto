@@ -57,4 +57,14 @@
 <div class="cart-overlay" id="cartOverlay" hidden><div class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle"><div class="cart-head"><div><small>RINGKASAN PILIHAN</small><h2 id="cartTitle">Keranjang foto</h2></div><button id="closeCart" class="close-button" aria-label="Tutup">×</button></div><div id="cartItems" class="cart-items"><div class="cart-empty">Belum ada foto yang dipilih.</div></div><div class="cart-bottom"><div class="total-row"><span>Total simulasi</span><strong id="cartTotal">Rp0</strong></div><p class="cart-warning">Checkout belum aktif. Pilihan ini belum tersimpan sebagai pesanan.</p><button class="btn btn-dark full" id="checkoutBtn">Lanjut ke checkout</button></div></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://xlhzkeqdgopqveslvglm.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+</script>
 </body></html>
