@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f45b91">
+<meta name="description" content="YARD Foto — galeri foto Yoga JJ Plus Saturday Event 1. Pilih foto favoritmu dan simpan momen terbaik.">
+<title>YARD Foto — Yoga JJ Plus Saturday Event 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#home" aria-label="YARD Foto beranda">
+    <img class="brand-logo" src="assets/logo/logo-yard.png" alt="Logo YARD" onerror="this.style.display='none'">
+    <span class="brand-text">YARD <b>FOTO</b><small>YOUR ACTION. YOUR STORY.</small></span>
+  </a>
+  <nav><a href="#event">Event</a><a href="#galeri">Galeri foto</a><a href="#cara">Cara membeli</a></nav>
+  <button class="cart-button" id="openCart">Keranjang <span id="cartCount">0</span></button>
+</header>
+<main id="home">
+<section class="hero wrap">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="live-dot"></span> MOMENMU, CERITAMU</div>
+    <h1>Setiap gerakan punya cerita.<br><span>Temukan momenmu.</span></h1>
+    <p>Jelajahi foto dari event olahraga, pilih momen favoritmu, dan simpan kenangan dalam kualitas terbaik.</p>
+    <div class="hero-actions"><a class="btn btn-dark" href="#galeri">Jelajahi foto <span>↗</span></a><a class="text-link" href="#cara">Cara membeli →</a></div>
+    <div class="hero-note"><span class="note-icon">✦</span><span>Yoga JJ Plus Saturday Event 1<br><b>JJ Plus Fitness · 24 Oktober 2026</b></span></div>
+  </div>
+  <div class="hero-art">
+    <div class="art-orbit"></div><div class="art-card"><img src="assets/photos/yoga-007.jpg" alt="Momen kelas yoga" onerror="this.style.display='none'"><span class="art-chip">YOGA · EVENT 01</span></div>
+    <div class="floating-tag"><span>✦</span><div><b>Keep this moment</b><small>YARD FOTO</small></div></div>
+    <div class="art-sticker">YOUR<br><b>MOMENT</b><br>MATTERS.</div>
+  </div>
+</section>
+<section class="stats wrap"><div><strong>01</strong><span>Event tersedia</span></div><div><strong id="totalPhotos">32</strong><span>Foto preview</span></div><div><strong>Rp3.000</strong><span>Harga per foto</span></div><div class="stats-note">MOMEN BERHARGA, TERSIMPAN SELAMANYA ✦</div></section>
+<section class="section wrap" id="event">
+  <div class="section-head"><div><div class="eyebrow">EVENT PERTAMA</div><h2>Yoga JJ Plus Saturday Event 1</h2><p class="section-desc">Satu event dulu, event lain bisa ditambahkan kapan saja.</p></div><span class="event-status">GALERI EVENT</span></div>
+  <article class="event-feature"><div class="event-feature-image"><img src="assets/photos/yoga-014.jpg" alt="Foto event yoga" onerror="this.style.display='none'"></div><div class="event-feature-info"><span class="event-pill">YOGA</span><h3>Yoga JJ Plus Saturday Event 1</h3><p>Dokumentasi momen latihan yoga bersama di JJ Plus Fitness.</p><div class="event-detail"><span>▦ &nbsp; Sabtu, 24 Oktober 2026</span><span>⌖ &nbsp; JJ Plus Fitness</span></div><div class="price-line"><div><small>HARGA PER FOTO</small><strong>Rp3.000</strong></div><a class="btn btn-pink" href="#galeri">Lihat galeri ↘</a></div></div></article>
+</section>
+<section class="gallery-section" id="galeri"><div class="wrap">
+  <div class="section-head"><div><div class="eyebrow">PILIH MOMEN FAVORITMU</div><h2>Galeri foto</h2><p class="section-desc">Cari foto berdasarkan nomor foto atau pilih dari galeri di bawah.</p></div><div class="gallery-count"><strong id="visibleCount">32</strong><span>foto</span></div></div>
+  <div class="gallery-tools"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Cari nomor foto, misalnya 001..." aria-label="Cari foto"></label><div class="filters"><button class="filter active" data-filter="Semua">Semua foto</button><button class="filter" data-filter="Potret">Potret</button><button class="filter" data-filter="Grup">Foto grup</button></div></div>
+  <div class="photo-grid" id="photoGrid"></div><div class="empty-state" id="emptyState" hidden>Foto tidak ditemukan. Coba kata kunci lain.</div>
+  <p class="gallery-disclaimer">Foto di galeri adalah preview dengan watermark. File asli beresolusi penuh tidak disediakan melalui halaman demo ini.</p>
+</div></section>
+<section class="how wrap" id="cara"><div class="how-intro"><div class="eyebrow">CARA MEMBELI</div><h2>Dari momen,<br>jadi kenangan.</h2><p>Pilih foto yang kamu suka. Sistem transaksi akan diaktifkan setelah database dan verifikasi pembayaran terpasang.</p></div><div class="how-steps">
+  <div class="how-step"><span>01</span><div><strong>Pilih foto</strong><p>Tekan tanda tambah pada foto favoritmu.</p></div><b>↗</b></div>
+  <div class="how-step"><span>02</span><div><strong>Periksa keranjang</strong><p>Pastikan foto dan total pesanan sudah benar.</p></div><b>↗</b></div>
+  <div class="how-step"><span>03</span><div><strong>Transfer dan unggah bukti</strong><p>Fitur ini akan aktif setelah sistem pesanan aman terhubung.</p></div><b>↗</b></div>
+  <div class="how-step"><span>04</span><div><strong>Unduh foto asli</strong><p>Unduhan dibuka setelah admin memverifikasi pembayaran.</p></div><b>↗</b></div>
+</div></section>
+<section class="notice wrap"><span class="notice-icon">ⓘ</span><div><b>Website sedang dalam tahap persiapan transaksi</b><p>Keranjang saat ini hanya simulasi. Jangan melakukan transfer dahulu dan jangan menganggap pesanan sudah tercatat. Kami akan mengaktifkan pembayaran setelah database dan notifikasi email selesai diuji.</p></div></section>
+</main>
+<footer class="footer"><div class="footer-inner wrap"><div class="footer-brand"><img src="assets/logo/wordmark-yard-foto.png" alt="YARD Foto" onerror="this.style.display='none'"><span>YOUR ACTION. YOUR STORY.</span></div><div>© <span id="year"></span> YARD Foto · Simpan momen terbaikmu.</div></div></footer>
+<div class="cart-overlay" id="cartOverlay" hidden><div class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle"><div class="cart-head"><div><small>RINGKASAN PILIHAN</small><h2 id="cartTitle">Keranjang foto</h2></div><button id="closeCart" class="close-button" aria-label="Tutup">×</button></div><div id="cartItems" class="cart-items"><div class="cart-empty">Belum ada foto yang dipilih.</div></div><div class="cart-bottom"><div class="total-row"><span>Total simulasi</span><strong id="cartTotal">Rp0</strong></div><p class="cart-warning">Checkout belum aktif. Pilihan ini belum tersimpan sebagai pesanan.</p><button class="btn btn-dark full" id="checkoutBtn">Lanjut ke checkout</button></div></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="script.js"></script>
+</body></html>
