@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffafc">
+  <title>Event — YARD FOTO</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #ef5b96;
+      --pink-dark: #d93e7b;
+      --pink-soft: #ffe6ef;
+      --ink: #211923;
+      --muted: #77717c;
+      --cream: #fffafc;
+      --line: #eee4e9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+    }
+
+    header {
+      padding: 18px 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .brand span { color: var(--pink); }
+
+    .back {
+      color: var(--pink-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    main {
+      width: min(1050px, 88%);
+      margin: auto;
+      padding: 55px 0 80px;
+    }
+
+    .event-cover {
+      height: 280px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #f8a9c7, #ef5b96, #d93e7b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 65px;
+      box-shadow: 0 15px 35px rgba(217,62,123,.15);
+    }
+
+    .event-info {
+      text-align: center;
+      margin: 32px auto;
+    }
+
+    .eyebrow {
+      color: var(--pink-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(27px, 5vw, 40px);
+      margin: 12px 0;
+      font-weight: 800;
+    }
+
+    .description {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: auto;
+    }
+
+    .password-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 23px;
+      padding: 32px;
+      max-width: 440px;
+      margin: 40px auto 0;
+      text-align: center;
+      box-shadow: 0 12px 35px rgba(70,30,50,.06);
+    }
+
+    .lock-icon {
+      width: 60px;
+      height: 60px;
+      margin: auto;
+      border-radius: 20px;
+      background: var(--pink-soft);
+      display: grid;
+      place-items: center;
+      font-size: 27px;
+    }
+
+    .password-card h2 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 21px;
+      margin: 18px 0 8px;
+    }
+
+    .password-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      font: inherit;
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 14px;
+      background: #fffafc;
+    }
+
+    input:focus { border-color: var(--pink); }
+
+    button {
+      width: 100%;
+      border: none;
+      background: var(--pink);
+      color: white;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    button:hover { background: var(--pink-dark); }
+
+    .message {
+      color: var(--pink-dark);
+      font-size: 13px;
+      margin-top: 15px;
+      min-height: 18px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media(max-width: 600px) {
+      header { padding: 15px 6%; }
+      .event-cover { height: 200px; }
+      .password-card { padding: 25px 20px; }
+      main { padding-top: 35px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <img src="assets/logo/logo-yard.png" alt="YARD FOTO">
+    <div>YARD <span>FOTO</span></div>
+  </div>
+  <a class="back" href="./events.html">← Daftar Event</a>
+</header>
+
+<main>
+
+  <div class="event-cover">📸</div>
+
+  <section class="event-info">
+    <div class="eyebrow">YOUR ACTION. YOUR STORY.</div>
+    <h1 id="eventName">Yoga JJ Plus Saturday Event 1</h1>
+    <p class="description">
+      Momen terbaikmu tersimpan di sini.
+      Masukkan password event untuk membuka galeri foto.
+    </p>
+  </section>
+
+  <section class="password-card">
+    <div class="lock-icon">🔒</div>
+    <h2>Masukkan Password</h2>
+    <p>
+      Halaman galeri ini khusus untuk peserta event.
+      Silakan masukkan password yang telah diberikan oleh penyelenggara.
+    </p>
+
+    <form id="passwordForm">
+      <input
+        type="password"
+        id="eventPassword"
+        placeholder="Masukkan password event"
+        autocomplete="off"
+        required
+      >
+      <button type="submit">BUKA GALERI →</button>
+    </form>
+
+    <div class="message" id="message"></div>
+  </section>
+
+</main>
+
+<footer>
+  © <span id="year"></span> YARD FOTO · YOUR MOMENT MATTERS.
+</footer>
+
+<script>
+  document.getElementById('year').textContent =
+    new Date().getFullYear();
+
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+
+  if (slug !== 'yoga-jj-plus-saturday-event-1') {
+    document.getElementById('eventName').textContent = 'Event tidak ditemukan';
+    document.querySelector('.description').textContent =
+      'Silakan kembali ke daftar event dan pilih event yang tersedia.';
+    document.querySelector('.password-card').style.display = 'none';
+  }
+
+  document.getElementById('passwordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    document.getElementById('message').textContent =
+      'Pemeriksaan password akan diaktifkan setelah terhubung ke Supabase.';
+  });
+</script>
+
+</body>
+</html>
