@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login — YARD Foto</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f4f5f7;
+      color: #202124;
+    }
+    .panel {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 8px 30px #0000000d;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .muted { color: #666; font-size: 14px; line-height: 1.5; }
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d5d7da;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #202124;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button.secondary {
+      margin-top: 9px;
+      background: white;
+      color: #202124;
+      border: 1px solid #d5d7da;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    #message {
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+    a { color: #202124; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>YARD Foto</h1>
+    <p class="muted" id="subtitle">
+      Masuk ke akunmu untuk melanjutkan pembelian foto.
+    </p>
+
+    <form id="authForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" required
+        autocomplete="email" placeholder="nama@email.com">
+
+      <label for="password">Kata sandi</label>
+      <input id="password" type="password" required
+        minlength="6" autocomplete="current-password"
+        placeholder="Minimal 6 karakter">
+
+      <button id="submitBtn" type="submit">Login</button>
+      <button class="secondary" id="signupBtn" type="button">
+        Buat akun baru
+      </button>
+    </form>
+
+    <p id="message" role="status"></p>
+    <p class="muted">
+      <a href="./index.html">Kembali ke galeri</a>
+    </p>
+  </main>
+
+  <script>
+    const SUPABASE_URL =
+      "https://xlhzkeqdgopqveslvglm.supabase.co";
+
+    // Gunakan publishable key yang sudah dipasang
+    // di index.html. Jangan gunakan service_role key.
+    const SUPABASE_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
+
+    const client = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const form = document.getElementById("authForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const submitBtn = document.getElementById("submitBtn");
+    const signupBtn = document.getElementById("signupBtn");
+    const message = document.getElementById("message");
+
+    function showMessage(text, error = false) {
+      message.textContent = text;
+      message.style.color = error ? "#b42318" : "#187044";
+    }
+
+    async function goToGallery() {
+      window.location.href = "./index.html";
+    }
+
+    // Jika pengguna sudah login, tidak perlu login lagi.
+    client.auth.getSession().then(({ data, error }) => {
+      if (error) {
+        showMessage(error.message, true);
+      } else if (data.session) {
+        goToGallery();
+      }
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      submitBtn.disabled = true;
+      signupBtn.disabled = true;
+      showMessage("Sedang memproses...");
+
+      try {
+        const { error } = await client.auth.signInWithPassword({
+          email: emailInput.value.trim(),
+          password: passwordInput.value
+        });
+
+        if (error) throw error;
+
+        showMessage("Login berhasil. Membuka galeri...");
+        goToGallery();
+      } catch (error) {
+        showMessage(error.message, true);
+      } finally {
+        submitBtn.disabled = false;
+        signupBtn.disabled = false;
+      }
+    });
+
+    signupBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showMessage("Isi email dan kata sandi terlebih dahulu.", true);
+        return;
+      }
+
+      signupBtn.disabled = true;
+      submitBtn.disabled = true;
+      showMessage("Sedang membuat akun...");
+
+      try {
+        const { data, error } = await client.auth.signUp({
+          email,
+          password
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          showMessage("Akun berhasil dibuat. Membuka galeri...");
+          goToGallery();
+        } else {
+          showMessage(
+            "Pendaftaran berhasil dikirim. Periksa email untuk " +
+            "konfirmasi akun jika diminta, lalu login."
+          );
+        }
+      } catch (error) {
+        showMessage(error.message, true);
+      } finally {
+        signupBtn.disabled = false;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
