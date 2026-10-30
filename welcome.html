@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffafc">
+  <title>Welcome — YARD FOTO</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --pink: #ef5b96;
+      --pink-dark: #d93e7b;
+      --pink-soft: #ffe6ef;
+      --cream: #fffafc;
+      --ink: #211923;
+      --muted: #77717c;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .background-circle {
+      position: absolute;
+      width: 430px;
+      height: 430px;
+      border-radius: 50%;
+      background: var(--pink-soft);
+      filter: blur(2px);
+      opacity: .65;
+      z-index: -1;
+      animation: breathe 5s ease-in-out infinite;
+    }
+
+    .background-circle.one {
+      top: -230px;
+      right: -100px;
+    }
+
+    .background-circle.two {
+      bottom: -280px;
+      left: -100px;
+      width: 520px;
+      height: 520px;
+    }
+
+    .welcome {
+      width: 100%;
+      max-width: 620px;
+      text-align: center;
+      animation: appear 1.2s ease both;
+    }
+
+    .logo-wrap {
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 28px;
+      display: grid;
+      place-items: center;
+      background: white;
+      border-radius: 36px;
+      box-shadow: 0 15px 50px #ef5b9620;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .logo-wrap img {
+      width: 85px;
+      height: 95px;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(38px, 8vw, 65px);
+      font-weight: 800;
+      letter-spacing: -3px;
+      margin: 0;
+    }
+
+    .brand-name span {
+      color: var(--pink);
+    }
+
+    .tagline {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 4px;
+    }
+
+    .welcome-line {
+      width: 48px;
+      height: 3px;
+      border-radius: 10px;
+      margin: 32px auto;
+      background: var(--pink);
+    }
+
+    .welcome h2 {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(20px, 4vw, 27px);
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    .welcome p {
+      max-width: 390px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .open-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 35px;
+      padding: 17px 42px;
+      border-radius: 999px;
+      background: var(--pink);
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      box-shadow: 0 12px 28px #ef5b9640;
+      transition: .25s ease;
+    }
+
+    .open-button:hover {
+      background: var(--pink-dark);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 35px #ef5b9650;
+    }
+
+    .arrow {
+      font-size: 18px;
+      transition: transform .25s ease;
+    }
+
+    .open-button:hover .arrow {
+      transform: translateX(5px);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 25px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: #aaa0a8;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.12);
+      }
+    }
+
+    @media(max-width: 600px) {
+      .logo-wrap {
+        width: 110px;
+        height: 110px;
+        border-radius: 30px;
+      }
+
+      .logo-wrap img {
+        width: 72px;
+        height: 82px;
+      }
+
+      .tagline {
+        font-size: 9px;
+        letter-spacing: 3px;
+      }
+
+      .welcome p {
+        font-size: 13px;
+      }
+
+      .footer {
+        bottom: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="background-circle one"></div>
+  <div class="background-circle two"></div>
+
+  <main class="welcome">
+
+    <div class="logo-wrap">
+      <img
+        src="assets/logo/logo-yard.png"
+        alt="Logo YARD FOTO">
+    </div>
+
+    <h1 class="brand-name">
+      YARD <span>FOTO</span>
+    </h1>
+
+    <div class="tagline">
+      YOUR ACTION. YOUR STORY.
+    </div>
+
+    <div class="welcome-line"></div>
+
+    <h2>Welcome to YARD FOTO!</h2>
+
+    <p>
+      Setiap gerakan punya cerita.
+      Temukan momen terbaikmu, cari fotomu,
+      dan simpan cerita yang tidak ingin kamu lupakan.
+    </p>
+
+    <a href="./index.html" class="open-button">
+      BUKA SEKARANG
+      <span class="arrow">→</span>
+    </a>
+
+  </main>
+
+  <footer class="footer">
+    © <span id="year"></span> YARD FOTO · YOUR MOMENT MATTERS.
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent =
+      new Date().getFullYear();
+  </script>
+
+</body>
+</html>
