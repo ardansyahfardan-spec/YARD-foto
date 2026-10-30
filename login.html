@@ -184,6 +184,49 @@
       transform: none;
     }
 
+    /* Google Login */
+    .google-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: #999;
+      font-size: 12px;
+    }
+
+    .google-divider::before,
+    .google-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    button.google-btn {
+      margin-top: 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    button.google-btn:hover {
+      background: #fff8fb;
+      border-color: var(--pink);
+    }
+
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
     #message {
       min-height: 20px;
       font-size: 12px;
@@ -305,6 +348,17 @@
         Buat akun baru
       </button>
 
+      <div class="google-divider">
+        <span>atau</span>
+      </div>
+
+      <button type="button" id="googleLogin" class="google-btn">
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google">
+        Continue with Google
+      </button>
+
       <p id="message" role="status"></p>
 
       <p class="switch-text" id="switchText">
@@ -323,8 +377,7 @@
     const SUPABASE_URL =
       "https://xlhzkeqdgopqveslvglm.supabase.co";
 
-    // Masukkan publishable key yang sama dari login.html lama.
-    // Jangan gunakan service_role key.
+    // Gunakan publishable key milik proyek YARD FOTO.
     const SUPABASE_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
 
     const client = window.supabase.createClient(
@@ -339,6 +392,7 @@
     const passwordInput = $('password');
     const submitBtn = $('submitBtn');
     const signupBtn = $('signupBtn');
+    const googleLogin = $('googleLogin');
     const message = $('message');
 
     let mode = 'login';
@@ -351,12 +405,12 @@
     function setLoading(loading) {
       submitBtn.disabled = loading;
       signupBtn.disabled = loading;
+      googleLogin.disabled = loading;
     }
 
     function destination() {
       const params = new URLSearchParams(window.location.search);
 
-      // Hanya izinkan tujuan checkout yang sudah ditentukan.
       return params.get('next') === 'checkout'
         ? './index.html?checkout=1'
         : './index.html';
@@ -413,6 +467,30 @@
       }
     }
 
+    // Login menggunakan Google
+    googleLogin.addEventListener('click', async () => {
+      setLoading(true);
+      showMessage('Menghubungkan ke Google...');
+
+      try {
+        const { error } = await client.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin +
+              window.location.pathname +
+              window.location.search
+          }
+        });
+
+        if (error) throw error;
+
+      } catch (error) {
+        showMessage(error.message, true);
+        setLoading(false);
+      }
+    });
+
+    // Login dan pendaftaran email
     form.addEventListener('submit', async event => {
       event.preventDefault();
 
@@ -432,7 +510,6 @@
           if (error) throw error;
 
           showMessage('Login berhasil. Membuka keranjang...');
-
           goBackToCheckout();
 
         } else {
