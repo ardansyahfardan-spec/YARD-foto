@@ -171,6 +171,7 @@
     }
 
     button:hover { background: var(--pink-dark); }
+    button:disabled { opacity: .6; cursor: wait; }
 
     .message {
       color: var(--pink-dark);
@@ -178,6 +179,42 @@
       margin-top: 15px;
       min-height: 18px;
     }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 35px;
+    }
+
+    .photo-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(70,30,50,.05);
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-caption {
+      padding: 13px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .gallery-title {
+      text-align: center;
+      font-family: 'Manrope', sans-serif;
+      margin-top: 45px;
+    }
+
+    .hidden { display: none; }
 
     footer {
       text-align: center;
@@ -212,14 +249,14 @@
 
   <section class="event-info">
     <div class="eyebrow">YOUR ACTION. YOUR STORY.</div>
-    <h1 id="eventName">Yoga JJ Plus Saturday Event 1</h1>
+    <h1 id="eventName">Memuat event...</h1>
     <p class="description">
       Momen terbaikmu tersimpan di sini.
       Masukkan password event untuk membuka galeri foto.
     </p>
   </section>
 
-  <section class="password-card">
+  <section class="password-card" id="passwordCard">
     <div class="lock-icon">🔒</div>
     <h2>Masukkan Password</h2>
     <p>
@@ -235,10 +272,15 @@
         autocomplete="off"
         required
       >
-      <button type="submit">BUKA GALERI →</button>
+      <button type="submit" id="submitButton">BUKA GALERI →</button>
     </form>
 
     <div class="message" id="message"></div>
+  </section>
+
+  <section id="gallerySection" class="hidden">
+    <h2 class="gallery-title">Galeri Foto Event</h2>
+    <div class="gallery" id="gallery"></div>
   </section>
 
 </main>
@@ -251,20 +293,105 @@
   document.getElementById('year').textContent =
     new Date().getFullYear();
 
+  const SUPABASE_FUNCTION_URL =
+    'https://xlhzkeqdgopqveslvglm.supabase.co/functions/v1/swift-processor';
+
+  // Publishable key Supabase diperlukan untuk header apikey.
+  // Isi dengan publishable key milik project YARD FOTO.
+  const SUPABASE_PUBLISHABLE_KEY = 'ISI_PUBLISHABLE_KEY_DI_SINI';
+
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
 
-  if (slug !== 'yoga-jj-plus-saturday-event-1') {
-    document.getElementById('eventName').textContent = 'Event tidak ditemukan';
+  const eventName = document.getElementById('eventName');
+  const passwordForm = document.getElementById('passwordForm');
+  const passwordInput = document.getElementById('eventPassword');
+  const message = document.getElementById('message');
+  const submitButton = document.getElementById('submitButton');
+  const passwordCard = document.getElementById('passwordCard');
+  const gallerySection = document.getElementById('gallerySection');
+  const gallery = document.getElementById('gallery');
+
+  if (!slug) {
+    eventName.textContent = 'Event tidak ditemukan';
     document.querySelector('.description').textContent =
       'Silakan kembali ke daftar event dan pilih event yang tersedia.';
-    document.querySelector('.password-card').style.display = 'none';
+    passwordCard.style.display = 'none';
   }
 
-  document.getElementById('passwordForm').addEventListener('submit', function(e) {
+  passwordForm.addEventListener('submit', async function(e) {
     e.preventDefault();
-    document.getElementById('message').textContent =
-      'Pemeriksaan password akan diaktifkan setelah terhubung ke Supabase.';
+
+    if (!slug) return;
+
+    const password = passwordInput.value.trim();
+
+    if (!password) {
+      message.textContent = 'Masukkan password event terlebih dahulu.';
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'MEMERIKSA...';
+    message.textContent = '';
+    gallery.innerHTML = '';
+
+    try {
+      const response = await fetch(SUPABASE_FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_PUBLISHABLE_KEY
+        },
+        body: JSON.stringify({
+          slug: slug,
+          password: password
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.error || 'Password salah atau event tidak tersedia.'
+        );
+      }
+
+      eventName.textContent = result.event.name;
+
+      if (!result.photos || result.photos.length === 0) {
+        gallery.innerHTML =
+          '<p>Belum ada foto yang tersedia untuk event ini.</p>';
+      } else {
+        result.photos.forEach(function(photo) {
+          const card = document.createElement('div');
+          card.className = 'photo-card';
+
+          const img = document.createElement('img');
+          img.src = photo.preview_url;
+          img.alt = photo.file_name || 'Foto event';
+          img.loading = 'lazy';
+
+          const caption = document.createElement('div');
+          caption.className = 'photo-caption';
+          caption.textContent = photo.file_name || 'Foto event';
+
+          card.appendChild(img);
+          card.appendChild(caption);
+          gallery.appendChild(card);
+        });
+      }
+
+      passwordCard.classList.add('hidden');
+      gallerySection.classList.remove('hidden');
+
+    } catch (error) {
+      message.textContent =
+        error.message || 'Terjadi kesalahan. Silakan coba lagi.';
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'BUKA GALERI →';
+    }
   });
 </script>
 
