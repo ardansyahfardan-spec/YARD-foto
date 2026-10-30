@@ -2,1216 +2,749 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard | YARD FOTO</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard | YARD FOTO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
-
-  <style>
-    :root {
-      --pink: #e95b91;
-      --pink-dark: #cf3974;
-      --pink-light: #fff0f5;
-      --cream: #fffaf6;
-      --ink: #29232a;
-      --muted: #817780;
-      --line: #f0e5eb;
-      --white: #ffffff;
-      --green: #23865b;
-      --red: #c43e4d;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: var(--cream);
-      color: var(--ink);
-      font-family: "DM Sans", sans-serif;
-    }
-
-    button, input, textarea, select {
-      font: inherit;
-    }
-
-    .container {
-      width: min(1100px, calc(100% - 32px));
-      margin: auto;
-    }
-
-    header {
-      background: white;
-      border-bottom: 1px solid var(--line);
-      padding: 17px 0;
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .brand {
-      font-family: Manrope, sans-serif;
-      font-size: 23px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .brand span {
-      color: var(--pink);
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-email {
-      font-size: 13px;
-      color: var(--muted);
-      overflow-wrap: anywhere;
-    }
-
-    main {
-      padding: 35px 0 70px;
-    }
-
-    .page-heading {
-      margin-bottom: 25px;
-    }
-
-    h1, h2, h3 {
-      font-family: Manrope, sans-serif;
-    }
-
-    h1 {
-      font-size: clamp(25px, 5vw, 35px);
-      margin: 0 0 8px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 0;
-      line-height: 1.6;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 22px;
-      box-shadow: 0 8px 30px rgba(80, 40, 60, .035);
-    }
-
-    .card h2 {
-      font-size: 19px;
-      margin: 0 0 7px;
-    }
-
-    .card-description {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-      margin: 0 0 22px;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: white;
-      color: var(--ink);
-      outline: none;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--pink);
-      box-shadow: 0 0 0 3px rgba(233, 91, 145, .10);
-    }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .btn {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      border: 0;
-      border-radius: 11px;
-      padding: 12px 18px;
-      background: var(--pink);
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .btn:hover {
-      background: var(--pink-dark);
-    }
-
-    .btn:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: var(--pink-light);
-      color: var(--pink-dark);
-    }
-
-    .btn-secondary:hover {
-      background: #ffe1ec;
-    }
-
-    .btn-danger {
-      background: #fff0f0;
-      color: var(--red);
-    }
-
-    .btn-small {
-      padding: 9px 12px;
-      font-size: 12px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .notice {
-      padding: 13px 15px;
-      border-radius: 11px;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 18px;
-      display: none;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .notice.success {
-      display: block;
-      background: #eaf8f0;
-      color: #176b45;
-    }
-
-    .notice.error {
-      display: block;
-      background: #fff0f0;
-      color: #a72d3b;
-    }
-
-    .notice.info {
-      display: block;
-      background: var(--pink-light);
-      color: var(--pink-dark);
-    }
-
-    .login-wrap {
-      width: min(420px, calc(100% - 32px));
-      margin: 70px auto;
-    }
-
-    .login-card {
-      background: white;
-      padding: 30px;
-      border-radius: 22px;
-      border: 1px solid var(--line);
-      box-shadow: 0 15px 50px rgba(80, 40, 60, .07);
-    }
-
-    .login-card .brand {
-      margin-bottom: 25px;
-    }
-
-    .event-list {
-      display: grid;
-      gap: 13px;
-    }
-
-    .event-item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 17px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .event-name {
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .event-meta {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .event-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .status {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 5px 9px;
-      border-radius: 20px;
-      margin-top: 8px;
-    }
-
-    .status.active {
-      background: #eaf8f0;
-      color: var(--green);
-    }
-
-    .status.draft {
-      background: #fff4e4;
-      color: #9b6417;
-    }
-
-    .upload-box {
-      border: 1.5px dashed #e8b6ca;
-      border-radius: 15px;
-      padding: 22px;
-      background: #fffafd;
-    }
-
-    .upload-hint {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-top: 10px;
-    }
-
-    .progress-wrap {
-      height: 9px;
-      border-radius: 20px;
-      background: #f4e9ee;
-      overflow: hidden;
-      margin: 14px 0 7px;
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: var(--pink);
-      transition: width .2s;
-    }
-
-    .progress-text {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .empty {
-      padding: 25px;
-      text-align: center;
-      color: var(--muted);
-      background: #fffafd;
-      border-radius: 13px;
-      font-size: 13px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    @media (max-width: 650px) {
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
-
-      .card {
-        padding: 19px;
-      }
-
-      .event-item {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .event-actions {
-        justify-content: flex-start;
-      }
-
-      .user-email {
-        display: none;
-      }
-
-      .header-inner {
-        flex-wrap: wrap;
-      }
-    }
-  </style>
+<style>
+:root {
+  --pink:#e95b91;
+  --pink-dark:#cf3974;
+  --pink-light:#fff0f5;
+  --cream:#fffaf6;
+  --ink:#29232a;
+  --muted:#817780;
+  --line:#f0e5eb;
+  --green:#23865b;
+  --red:#c43e4d;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif}
+button,input,textarea,select{font:inherit}
+.container{width:min(1100px,calc(100% - 32px));margin:auto}
+header{background:white;border-bottom:1px solid var(--line);padding:17px 0}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-family:Manrope,sans-serif;font-size:23px;font-weight:800;letter-spacing:-1px}
+.brand span{color:var(--pink)}
+.header-right{display:flex;align-items:center;gap:12px}
+.user-email{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+main{padding:35px 0 70px}
+h1,h2,h3{font-family:Manrope,sans-serif}
+h1{font-size:clamp(25px,5vw,35px);margin:0 0 8px}
+.subtitle{color:var(--muted);margin:0;line-height:1.6}
+.page-heading{margin-bottom:25px}
+.card{background:white;border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:22px;box-shadow:0 8px 30px rgba(80,40,60,.035)}
+.card h2{font-size:19px;margin:0 0 7px}
+.card-description{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 22px}
+.field{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}
+input,textarea,select{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(233,91,145,.1)}
+textarea{min-height:90px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;border-radius:11px;padding:12px 18px;background:var(--pink);color:white;font-weight:700;cursor:pointer;transition:.2s}
+.btn:hover{background:var(--pink-dark)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-secondary{background:var(--pink-light);color:var(--pink-dark)}
+.btn-secondary:hover{background:#ffe1ec}
+.btn-danger{background:#fff0f0;color:var(--red)}
+.btn-danger:hover{background:#ffe0e0}
+.btn-small{padding:9px 12px;font-size:12px}
+.hidden{display:none!important}
+.notice{padding:13px 15px;border-radius:11px;font-size:13px;line-height:1.6;margin-bottom:18px;display:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.notice.success{display:block;background:#eaf8f0;color:#176b45}
+.notice.error{display:block;background:#fff0f0;color:#a72d3b}
+.notice.info{display:block;background:var(--pink-light);color:var(--pink-dark)}
+.login-wrap{width:min(420px,calc(100% - 32px));margin:70px auto}
+.login-card{background:white;padding:30px;border-radius:22px;border:1px solid var(--line);box-shadow:0 15px 50px rgba(80,40,60,.07)}
+.login-card .brand{margin-bottom:25px}
+.event-list{display:grid;gap:13px}
+.event-item{border:1px solid var(--line);border-radius:14px;padding:17px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.event-name{font-weight:800;margin-bottom:6px}
+.event-meta{color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.event-actions{display:flex;gap:8px;flex-wrap:wrap}
+.status{display:inline-block;font-size:11px;font-weight:700;padding:5px 9px;border-radius:20px;margin-top:8px}
+.status.active{background:#eaf8f0;color:var(--green)}
+.status.draft{background:#fff4e4;color:#9b6417}
+.upload-box{border:1.5px dashed #e8b6ca;border-radius:15px;padding:22px;background:#fffafd}
+.upload-hint{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px}
+.progress-wrap{height:9px;border-radius:20px;background:#f4e9ee;overflow:hidden;margin:14px 0 7px}
+.progress-bar{width:0%;height:100%;background:var(--pink);transition:width .2s}
+.progress-text{color:var(--muted);font-size:12px}
+.empty{padding:25px;text-align:center;color:var(--muted);background:#fffafd;border-radius:13px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.stat{background:#fffafd;border:1px solid var(--line);border-radius:13px;padding:15px}
+.stat strong{display:block;font-family:Manrope,sans-serif;font-size:25px}
+.stat span{font-size:12px;color:var(--muted)}
+.photo-list{display:grid;gap:10px}
+.photo-item{border:1px solid var(--line);border-radius:13px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.photo-info{min-width:0}
+.photo-name{font-weight:700;font-size:13px;overflow-wrap:anywhere}
+.photo-meta{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.6}
+.photo-actions{flex-shrink:0}
+.filter-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+.filter-row select{max-width:300px}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}
+@media(max-width:650px){
+ .grid{grid-template-columns:1fr;gap:0}
+ .card{padding:19px}
+ .event-item{align-items:flex-start;flex-direction:column}
+ .user-email{display:none}
+ .header-inner{flex-wrap:wrap}
+ .stats{grid-template-columns:1fr 1fr}
+ .photo-item{align-items:flex-start;flex-direction:column}
+ .photo-actions{width:100%}
+ .photo-actions button{width:100%}
+}
+</style>
 </head>
 
 <body>
-
-  <header>
-    <div class="container header-inner">
-      <div class="brand">YARD <span>FOTO</span></div>
-
-      <div class="header-right">
-        <span class="user-email" id="userEmail"></span>
-        <button class="btn btn-secondary btn-small hidden" id="logoutBtn">
-          Keluar
-        </button>
-      </div>
+<header>
+  <div class="container header-inner">
+    <div class="brand">YARD <span>FOTO</span></div>
+    <div class="header-right">
+      <span class="user-email" id="userEmail"></span>
+      <button class="btn btn-secondary btn-small hidden" id="logoutBtn">Keluar</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <section id="loginSection" class="login-wrap">
-    <div class="login-card">
-      <div class="brand">YARD <span>FOTO</span></div>
-      <h1>Admin Login</h1>
-      <p class="subtitle">Masuk untuk mengelola event dan foto.</p>
+<section id="loginSection" class="login-wrap">
+  <div class="login-card">
+    <div class="brand">YARD <span>FOTO</span></div>
+    <h1>Admin Login</h1>
+    <p class="subtitle">Masuk untuk mengelola event dan foto.</p>
+    <div id="loginNotice" class="notice"></div>
+    <form id="loginForm" style="margin-top:24px">
+      <div class="field">
+        <label>Email</label>
+        <input id="loginEmail" type="email" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPassword" type="password" required autocomplete="current-password">
+      </div>
+      <button class="btn" type="submit" id="loginBtn" style="width:100%">Masuk Dashboard</button>
+    </form>
+  </div>
+</section>
 
-      <div id="loginNotice" class="notice"></div>
+<main id="dashboardSection" class="hidden">
+<div class="container">
 
-      <form id="loginForm" style="margin-top:24px">
+  <div class="page-heading">
+    <h1>Dashboard Admin</h1>
+    <p class="subtitle">Kelola event, foto, dan publikasi YARD FOTO.</p>
+  </div>
+
+  <div id="mainNotice" class="notice"></div>
+
+  <section class="card">
+    <h2>Buat Event Baru</h2>
+    <p class="card-description">Buat event dan password untuk galeri pengunjung.</p>
+    <form id="eventForm">
+      <div class="field">
+        <label>Nama Event</label>
+        <input id="eventName" type="text" placeholder="Nama event" required>
+      </div>
+      <div class="grid">
         <div class="field">
-          <label>Email</label>
-          <input id="loginEmail" type="email" required autocomplete="username">
+          <label>Tanggal Event</label>
+          <input id="eventDate" type="date">
         </div>
-
         <div class="field">
-          <label>Password</label>
-          <input id="loginPassword" type="password" required autocomplete="current-password">
+          <label>Lokasi</label>
+          <input id="eventLocation" type="text" placeholder="Nama lokasi">
         </div>
+      </div>
+      <div class="field">
+        <label>Kategori</label>
+        <input id="eventCategory" type="text" placeholder="Sport, Wedding, Corporate">
+      </div>
+      <div class="field">
+        <label>Deskripsi</label>
+        <textarea id="eventDescription" placeholder="Deskripsi singkat event"></textarea>
+      </div>
+      <div class="field">
+        <label>Password Galeri</label>
+        <input id="eventPassword" type="text" minlength="6" required placeholder="Minimal 6 karakter">
+      </div>
+      <button class="btn" id="createEventBtn" type="submit">Buat Event</button>
+    </form>
+  </section>
 
-        <button class="btn" type="submit" id="loginBtn" style="width:100%">
-          Masuk Dashboard
-        </button>
-      </form>
+  <section class="card">
+    <h2>Unggah Foto</h2>
+    <p class="card-description">Pilih beberapa foto sekaligus. Preview dibuat dengan watermark permanen.</p>
+    <form id="uploadForm">
+      <div class="field">
+        <label>Pilih Event</label>
+        <select id="uploadEvent" required>
+          <option value="">Memuat event...</option>
+        </select>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Harga per Foto (Rupiah)</label>
+          <input id="photoPrice" type="number" min="0" step="1000" value="10000" required>
+        </div>
+        <div class="field">
+          <label>File Foto (JPG)</label>
+          <input id="photoFiles" type="file" accept=".jpg,.jpeg,image/jpeg" multiple required>
+        </div>
+      </div>
+      <div class="upload-box">
+        <strong id="selectedFilesText">Belum ada foto dipilih</strong>
+        <div class="upload-hint">
+          Bisa memilih banyak foto sekaligus.<br>
+          Format JPG/JPEG. Maksimal 10 MB per foto asli.<br>
+          Foto asli tanpa watermark, preview dengan watermark YARD FOTO.
+        </div>
+      </div>
+      <div id="uploadProgressArea" class="hidden">
+        <div class="progress-wrap"><div id="uploadProgressBar" class="progress-bar"></div></div>
+        <div id="uploadProgressText" class="progress-text"></div>
+      </div>
+      <div style="margin-top:18px">
+        <button class="btn" type="submit" id="uploadBtn">Unggah Semua Foto</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Daftar Event</h2>
+    <p class="card-description">Publikasikan seluruh foto draft dalam satu kali klik.</p>
+    <button class="btn btn-secondary btn-small" id="refreshEventsBtn" type="button">Muat Ulang Event</button>
+    <div id="eventList" class="event-list" style="margin-top:16px">
+      <div class="empty">Memuat event...</div>
     </div>
   </section>
 
-  <main id="dashboardSection" class="hidden">
-    <div class="container">
+  <section class="card" id="photoManagement">
+    <h2>Manajemen Foto</h2>
+    <p class="card-description">Pilih event untuk melihat foto, jumlah foto, status, dan menghapus foto.</p>
 
-      <div class="page-heading">
-        <h1>Dashboard Admin</h1>
-        <p class="subtitle">Kelola event, unggah foto, dan publikasikan galeri YARD FOTO.</p>
-      </div>
-
-      <div id="mainNotice" class="notice"></div>
-
-      <section class="card">
-        <h2>Buat Event Baru</h2>
-        <p class="card-description">
-          Buat event dan tentukan password yang akan digunakan pengunjung untuk membuka galeri.
-        </p>
-
-        <form id="eventForm">
-          <div class="field">
-            <label>Nama Event</label>
-            <input id="eventName" type="text" placeholder="Contoh: Yoga JJ Plus Saturday Event 2" required>
-          </div>
-
-          <div class="grid">
-            <div class="field">
-              <label>Tanggal Event</label>
-              <input id="eventDate" type="date">
-            </div>
-
-            <div class="field">
-              <label>Lokasi</label>
-              <input id="eventLocation" type="text" placeholder="Nama lokasi">
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Kategori</label>
-            <input id="eventCategory" type="text" placeholder="Contoh: Sport, Wedding, Corporate">
-          </div>
-
-          <div class="field">
-            <label>Deskripsi</label>
-            <textarea id="eventDescription" placeholder="Deskripsi singkat event"></textarea>
-          </div>
-
-          <div class="field">
-            <label>Password Galeri</label>
-            <input id="eventPassword" type="text" minlength="6" placeholder="Minimal 6 karakter" required>
-          </div>
-
-          <button class="btn" id="createEventBtn" type="submit">
-            Buat Event
-          </button>
-        </form>
-      </section>
-
-      <section class="card">
-        <h2>Unggah Foto</h2>
-        <p class="card-description">
-          Pilih event tujuan, kemudian pilih beberapa foto sekaligus. Preview akan diberi watermark YARD FOTO secara permanen.
-        </p>
-
-        <form id="uploadForm">
-          <div class="field">
-            <label>Pilih Event</label>
-            <select id="uploadEvent" required>
-              <option value="">Memuat daftar event...</option>
-            </select>
-          </div>
-
-          <div class="grid">
-            <div class="field">
-              <label>Harga per Foto (Rupiah)</label>
-              <input id="photoPrice" type="number" min="0" step="1000" value="10000" required>
-            </div>
-
-            <div class="field">
-              <label>File Foto (JPG)</label>
-              <input
-                id="photoFiles"
-                type="file"
-                accept=".jpg,.jpeg,image/jpeg"
-                multiple
-                required
-              >
-            </div>
-          </div>
-
-          <div class="upload-box">
-            <strong id="selectedFilesText">Belum ada foto dipilih</strong>
-            <div class="upload-hint">
-              Bisa memilih banyak foto sekaligus.<br>
-              Format: JPG/JPEG.<br>
-              Maksimal ukuran foto asli: 10 MB per foto.<br>
-              Foto asli disimpan tanpa watermark. Preview disimpan dengan watermark permanen.
-            </div>
-          </div>
-
-          <div id="uploadProgressArea" class="hidden">
-            <div class="progress-wrap">
-              <div id="uploadProgressBar" class="progress-bar"></div>
-            </div>
-            <div id="uploadProgressText" class="progress-text"></div>
-          </div>
-
-          <div style="margin-top:18px">
-            <button class="btn" type="submit" id="uploadBtn">
-              Unggah Semua Foto
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section class="card">
-        <h2>Daftar Event</h2>
-        <p class="card-description">
-          Kelola event dan publikasikan semua foto draft dalam satu kali klik.
-        </p>
-
-        <div style="margin-bottom:17px">
-          <button class="btn btn-secondary btn-small" id="refreshEventsBtn" type="button">
-            Muat Ulang Event
-          </button>
-        </div>
-
-        <div id="eventList" class="event-list">
-          <div class="empty">Memuat event...</div>
-        </div>
-      </section>
-
+    <div class="filter-row">
+      <select id="manageEvent">
+        <option value="">Pilih event</option>
+      </select>
+      <button class="btn btn-secondary btn-small" id="refreshPhotosBtn" type="button">Muat Foto</button>
     </div>
-  </main>
 
-  <footer>YARD FOTO Admin Dashboard</footer>
+    <div id="photoStats" class="stats hidden">
+      <div class="stat"><strong id="totalPhotos">0</strong><span>Total foto</span></div>
+      <div class="stat"><strong id="draftPhotos">0</strong><span>Foto draft</span></div>
+      <div class="stat"><strong id="publishedPhotos">0</strong><span>Foto tayang</span></div>
+    </div>
 
-  <script>
-    // =========================================
-    // KONFIGURASI SUPABASE
-    // =========================================
+    <div id="photoList" class="photo-list">
+      <div class="empty">Pilih event untuk melihat foto.</div>
+    </div>
+  </section>
 
-    const SUPABASE_URL = "https://xlhzkeqdgopqveslvglm.supabase.co";
+</div>
+</main>
 
-    const SUPABASE_ANON_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
+<footer>YARD FOTO Admin Dashboard</footer>
 
-    const UPLOAD_FUNCTION_URL =
-      SUPABASE_URL + "/functions/v1/upload-processor";
+<script>
+const SUPABASE_URL = "https://xlhzkeqdgopqveslvglm.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
+const UPLOAD_FUNCTION_URL = SUPABASE_URL + "/functions/v1/upload-processor";
+const DELETE_FUNCTION_URL = SUPABASE_URL + "/functions/v1/delete-processor";
 
-    const db = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // =========================================
-    // ELEMENT
-    // =========================================
+const $ = id => document.getElementById(id);
+let currentUser = null;
+let isUploading = false;
 
-    const loginSection = document.getElementById("loginSection");
-    const dashboardSection = document.getElementById("dashboardSection");
-    const loginForm = document.getElementById("loginForm");
-    const loginNotice = document.getElementById("loginNotice");
-    const mainNotice = document.getElementById("mainNotice");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userEmail = document.getElementById("userEmail");
+function showNotice(element,message,type="info"){
+  element.textContent=message;
+  element.className="notice "+type;
+  element.style.display="block";
+}
+function hideNotice(element){
+  element.textContent="";
+  element.className="notice";
+  element.style.display="none";
+}
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[c]);
+}
+function setLoading(button,loading,label){
+  if(loading){
+    button.dataset.oldText=button.textContent;
+    button.disabled=true;
+    button.textContent=label||"Memproses...";
+  }else{
+    button.disabled=false;
+    button.textContent=button.dataset.oldText||button.textContent;
+  }
+}
 
-    const eventForm = document.getElementById("eventForm");
-    const eventList = document.getElementById("eventList");
-    const uploadForm = document.getElementById("uploadForm");
-    const photoFiles = document.getElementById("photoFiles");
+async function verifyAdmin(user){
+  const {data,error}=await db.from("admin_users")
+    .select("user_id").eq("user_id",user.id).maybeSingle();
+  if(error)throw error;
+  return !!data;
+}
 
-    let currentUser = null;
-    let isUploading = false;
+async function showDashboard(user){
+  if(!await verifyAdmin(user)){
+    await db.auth.signOut();
+    throw new Error("Akun ini tidak terdaftar sebagai admin YARD FOTO.");
+  }
+  currentUser=user;
+  $("loginSection").classList.add("hidden");
+  $("dashboardSection").classList.remove("hidden");
+  $("logoutBtn").classList.remove("hidden");
+  $("userEmail").textContent=user.email||"";
+  await loadEvents();
+}
 
-    // =========================================
-    // NOTIFICATION
-    // =========================================
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  hideNotice($("loginNotice"));
+  setLoading($("loginBtn"),true,"Memeriksa akun...");
+  try{
+    const {data,error}=await db.auth.signInWithPassword({
+      email:$("loginEmail").value.trim(),
+      password:$("loginPassword").value
+    });
+    if(error)throw error;
+    await showDashboard(data.user);
+  }catch(error){
+    showNotice($("loginNotice"),error.message,"error");
+  }finally{
+    setLoading($("loginBtn"),false);
+  }
+});
 
-    function showNotice(element, message, type = "info") {
-      element.textContent = message;
-      element.className = "notice " + type;
-      element.style.display = "block";
+$("logoutBtn").addEventListener("click",async()=>{
+  await db.auth.signOut();
+  location.reload();
+});
+
+db.auth.onAuthStateChange((event)=>{
+  if(event==="SIGNED_OUT")location.reload();
+});
+
+async function initializeAuth(){
+  const {data,error}=await db.auth.getSession();
+  if(error){
+    showNotice($("loginNotice"),error.message,"error");
+    return;
+  }
+  if(data.session){
+    try{await showDashboard(data.session.user);}
+    catch(error){showNotice($("loginNotice"),error.message,"error");}
+  }
+}
+
+// BUAT EVENT
+$("eventForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  hideNotice($("mainNotice"));
+  setLoading($("createEventBtn"),true,"Membuat event...");
+  try{
+    const name=$("eventName").value.trim();
+    const password=$("eventPassword").value;
+    if(password.length<6)throw new Error("Password minimal 6 karakter.");
+
+    const slug=name.toLowerCase().normalize("NFD")
+      .replace(/[\u0300-\u036f]/g,"")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")
+      +"-"+Date.now().toString().slice(-6);
+
+    const passwordHash=dcodeIO.bcrypt.hashSync(password,10);
+
+    const {error}=await db.from("events").insert({
+      name,slug,
+      event_date:$("eventDate").value||null,
+      location:$("eventLocation").value.trim()||null,
+      category:$("eventCategory").value.trim()||null,
+      description:$("eventDescription").value.trim()||null,
+      password_hash:passwordHash,
+      is_published:false
+    });
+    if(error)throw error;
+
+    $("eventForm").reset();
+    showNotice($("mainNotice"),"Event berhasil dibuat.","success");
+    await loadEvents();
+  }catch(error){
+    showNotice($("mainNotice"),"Gagal membuat event: "+error.message,"error");
+  }finally{
+    setLoading($("createEventBtn"),false);
+  }
+});
+
+// MEMUAT EVENT
+async function loadEvents(){
+  const {data,error}=await db.from("events")
+    .select("id,name,slug,event_date,location,is_published,created_at")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    $("eventList").innerHTML='<div class="empty">Gagal memuat event: '+escapeHtml(error.message)+'</div>';
+    return;
+  }
+
+  const events=data||[];
+  const uploadSelect=$("uploadEvent");
+  const manageSelect=$("manageEvent");
+
+  const oldUpload=uploadSelect.value;
+  const oldManage=manageSelect.value;
+
+  uploadSelect.innerHTML='<option value="">Pilih event tujuan</option>';
+  manageSelect.innerHTML='<option value="">Pilih event</option>';
+
+  events.forEach(item=>{
+    [uploadSelect,manageSelect].forEach(select=>{
+      const option=document.createElement("option");
+      option.value=item.id;
+      option.textContent=item.name;
+      select.appendChild(option);
+    });
+  });
+
+  if(events.some(e=>e.id===oldUpload))uploadSelect.value=oldUpload;
+  if(events.some(e=>e.id===oldManage))manageSelect.value=oldManage;
+
+  if(!events.length){
+    $("eventList").innerHTML='<div class="empty">Belum ada event.</div>';
+    return;
+  }
+
+  $("eventList").innerHTML=events.map(item=>`
+    <div class="event-item">
+      <div>
+        <div class="event-name">${escapeHtml(item.name)}</div>
+        <div class="event-meta">
+          Slug: ${escapeHtml(item.slug)}<br>
+          ${escapeHtml(item.event_date||"Tanggal belum diatur")}
+          ${item.location?" · "+escapeHtml(item.location):""}
+        </div>
+        <span class="status ${item.is_published?"active":"draft"}">
+          ${item.is_published?"Event aktif":"Draft"}
+        </span>
+      </div>
+      <div class="event-actions">
+        <button class="btn btn-small" data-publish="${escapeHtml(item.id)}" data-name="${escapeHtml(item.name)}">
+          Publikasikan Semua Foto
+        </button>
+        <button class="btn btn-secondary btn-small" data-copy="${escapeHtml(item.slug)}">
+          Salin Slug
+        </button>
+        <button class="btn btn-secondary btn-small" data-manage="${escapeHtml(item.id)}">
+          Kelola Foto
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+$("refreshEventsBtn").addEventListener("click",loadEvents);
+
+$("eventList").addEventListener("click",async e=>{
+  const publish=e.target.closest("[data-publish]");
+  const copy=e.target.closest("[data-copy]");
+  const manage=e.target.closest("[data-manage]");
+
+  if(copy){
+    try{
+      await navigator.clipboard.writeText(copy.dataset.copy);
+      showNotice($("mainNotice"),"Slug berhasil disalin.","success");
+    }catch{
+      showNotice($("mainNotice"),"Slug: "+copy.dataset.copy,"info");
     }
+    return;
+  }
 
-    function hideNotice(element) {
-      element.textContent = "";
-      element.className = "notice";
-      element.style.display = "none";
+  if(manage){
+    $("manageEvent").value=manage.dataset.manage;
+    await loadPhotos();
+    $("photoManagement").scrollIntoView({behavior:"smooth"});
+    return;
+  }
+
+  if(!publish)return;
+
+  if(!confirm('Publikasikan semua foto draft pada event "'+publish.dataset.name+'" dan aktifkan event ini?'))return;
+
+  setLoading(publish,true,"Memublikasikan...");
+  try{
+    const {data,error}=await db.rpc("publish_event_photos",{
+      p_event_id:publish.dataset.publish
+    });
+    if(error)throw error;
+    showNotice($("mainNotice"),
+      Number(data||0)+" foto draft berhasil dipublikasikan. Event aktif.",
+      "success");
+    await loadEvents();
+    if($("manageEvent").value===publish.dataset.publish)await loadPhotos();
+  }catch(error){
+    showNotice($("mainNotice"),"Gagal memublikasikan: "+error.message,"error");
+    setLoading(publish,false);
+  }
+});
+
+// WATERMARK PREVIEW
+async function createWatermarkedPreview(file){
+  const bitmap=await createImageBitmap(file);
+  const scale=Math.min(1,2000/bitmap.width,2000/bitmap.height);
+  const width=Math.max(1,Math.round(bitmap.width*scale));
+  const height=Math.max(1,Math.round(bitmap.height*scale));
+
+  const canvas=document.createElement("canvas");
+  canvas.width=width;
+  canvas.height=height;
+  const ctx=canvas.getContext("2d");
+  if(!ctx){bitmap.close();throw new Error("Browser tidak dapat memproses foto.");}
+
+  ctx.drawImage(bitmap,0,0,width,height);
+  bitmap.close();
+
+  ctx.save();
+  const fontSize=Math.max(22,Math.round(width*.035));
+  ctx.font="800 "+fontSize+"px Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.translate(width/2,height/2);
+  ctx.rotate(-Math.PI/5);
+
+  const tileWidth=fontSize*8;
+  const tileHeight=fontSize*4;
+
+  for(let y=-height*2;y<height*2;y+=tileHeight){
+    for(let x=-width*2;x<width*2;x+=tileWidth){
+      ctx.fillStyle="rgba(255,255,255,.58)";
+      ctx.fillText("YARD FOTO",x,y);
+      ctx.strokeStyle="rgba(70,35,55,.20)";
+      ctx.lineWidth=1;
+      ctx.strokeText("YARD FOTO",x,y);
     }
+  }
+  ctx.restore();
 
-    function setButtonLoading(button, loading, text) {
-      button.disabled = loading;
-      if (loading) {
-        button.dataset.originalText = button.textContent;
-        button.textContent = text || "Memproses...";
-      } else {
-        button.textContent =
-          button.dataset.originalText || button.textContent;
+  return await new Promise((resolve,reject)=>{
+    canvas.toBlob(blob=>{
+      if(!blob)return reject(new Error("Gagal membuat preview."));
+      resolve(new File([blob],
+        file.name.replace(/\.[^.]+$/,"")+"-preview.jpg",
+        {type:"image/jpeg"}));
+    },"image/jpeg",.78);
+  });
+}
+
+$("photoFiles").addEventListener("change",()=>{
+  const count=$("photoFiles").files.length;
+  $("selectedFilesText").textContent=count?count+" foto dipilih":"Belum ada foto dipilih";
+});
+
+// UPLOAD
+async function uploadOnePhoto(file,eventId,price,token){
+  if(file.type!=="image/jpeg")throw new Error("Format harus JPG/JPEG.");
+  if(file.size>10*1024*1024)throw new Error("Foto asli melebihi 10 MB.");
+
+  const preview=await createWatermarkedPreview(file);
+  if(preview.size>8*1024*1024)throw new Error("Preview melebihi 8 MB.");
+
+  const form=new FormData();
+  form.append("event_id",eventId);
+  form.append("price",String(price));
+  form.append("file",file,file.name);
+  form.append("preview",preview,preview.name);
+
+  const response=await fetch(UPLOAD_FUNCTION_URL,{
+    method:"POST",
+    headers:{
+      "Authorization":"Bearer "+token,
+      "apikey":SUPABASE_ANON_KEY
+    },
+    body:form
+  });
+
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(result.error||result.message||"Upload gagal HTTP "+response.status);
+  return result;
+}
+
+$("uploadForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(isUploading)return;
+  hideNotice($("mainNotice"));
+
+  const eventId=$("uploadEvent").value;
+  const price=Number($("photoPrice").value);
+  const files=Array.from($("photoFiles").files||[]);
+
+  if(!eventId)return showNotice($("mainNotice"),"Pilih event terlebih dahulu.","error");
+  if(!files.length)return showNotice($("mainNotice"),"Pilih minimal satu foto.","error");
+  if(!Number.isSafeInteger(price)||price<0)return showNotice($("mainNotice"),"Harga tidak valid.","error");
+
+  const {data:sessionData}=await db.auth.getSession();
+  if(!sessionData.session)return showNotice($("mainNotice"),"Sesi login berakhir. Login kembali.","error");
+
+  isUploading=true;
+  const button=$("uploadBtn");
+  button.disabled=true;
+  button.textContent="Sedang mengunggah...";
+
+  $("uploadProgressArea").classList.remove("hidden");
+  let success=0;
+  const failed=[];
+
+  try{
+    for(let i=0;i<files.length;i++){
+      $("uploadProgressText").textContent=
+        "Memproses "+(i+1)+" dari "+files.length+": "+files[i].name;
+
+      try{
+        await uploadOnePhoto(files[i],eventId,price,sessionData.session.access_token);
+        success++;
+      }catch(error){
+        failed.push(files[i].name+": "+error.message);
       }
+
+      $("uploadProgressBar").style.width=
+        Math.round((i+1)/files.length*100)+"%";
     }
 
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>"']/g, function(char) {
-        return {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        }[char];
-      });
-    }
+    $("photoFiles").value="";
+    $("selectedFilesText").textContent="Belum ada foto dipilih";
 
-    // =========================================
-    // AUTH DAN CEK ADMIN
-    // =========================================
+    let message=success+" dari "+files.length+" foto berhasil diunggah.\nFoto baru masih berstatus draft.";
+    if(failed.length)message+="\n\nGagal:\n"+failed.join("\n");
 
-    async function verifyAdmin(user) {
-      if (!user) return false;
+    showNotice($("mainNotice"),message,failed.length?"error":"success");
+    await loadEvents();
 
-      const { data, error } = await db
-        .from("admin_users")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+    if($("manageEvent").value===eventId)await loadPhotos();
 
-      if (error) {
-        throw error;
-      }
+  }catch(error){
+    showNotice($("mainNotice"),error.message,"error");
+  }finally{
+    isUploading=false;
+    button.disabled=false;
+    button.textContent="Unggah Semua Foto";
+    $("uploadProgressText").textContent="Selesai: "+success+" foto berhasil.";
+  }
+});
 
-      return !!data;
-    }
+// MANAJEMEN FOTO
+async function loadPhotos(){
+  const eventId=$("manageEvent").value;
 
-    async function showDashboard(user) {
-      const isAdmin = await verifyAdmin(user);
+  if(!eventId){
+    $("photoStats").classList.add("hidden");
+    $("photoList").innerHTML='<div class="empty">Pilih event untuk melihat foto.</div>';
+    return;
+  }
 
-      if (!isAdmin) {
-        await db.auth.signOut();
-        throw new Error("Akun ini tidak terdaftar sebagai admin YARD FOTO.");
-      }
+  $("photoList").innerHTML='<div class="empty">Memuat foto...</div>';
 
-      currentUser = user;
+  const {data:photos,error}=await db.from("photos")
+    .select("id,event_id,file_name,price,is_published,created_at")
+    .eq("event_id",eventId)
+    .order("created_at",{ascending:false});
 
-      loginSection.classList.add("hidden");
-      dashboardSection.classList.remove("hidden");
-      logoutBtn.classList.remove("hidden");
+  if(error){
+    $("photoList").innerHTML='<div class="empty">Gagal memuat foto: '+escapeHtml(error.message)+'</div>';
+    return;
+  }
 
-      userEmail.textContent = user.email || "";
+  const list=photos||[];
+  const draft=list.filter(p=>!p.is_published).length;
+  const published=list.filter(p=>p.is_published).length;
 
-      await loadEvents();
-    }
+  $("photoStats").classList.remove("hidden");
+  $("totalPhotos").textContent=list.length;
+  $("draftPhotos").textContent=draft;
+  $("publishedPhotos").textContent=published;
 
-    loginForm.addEventListener("submit", async function(event) {
-      event.preventDefault();
-      hideNotice(loginNotice);
+  if(!list.length){
+    $("photoList").innerHTML='<div class="empty">Belum ada foto di event ini.</div>';
+    return;
+  }
 
-      const button = document.getElementById("loginBtn");
-      setButtonLoading(button, true, "Memeriksa akun...");
+  $("photoList").innerHTML=list.map(photo=>`
+    <div class="photo-item">
+      <div class="photo-info">
+        <div class="photo-name">${escapeHtml(photo.file_name)}</div>
+        <div class="photo-meta">
+          Harga: Rp ${Number(photo.price||0).toLocaleString("id-ID")}<br>
+          Diunggah: ${photo.created_at?new Date(photo.created_at).toLocaleString("id-ID"):"-"}<br>
+          <span class="status ${photo.is_published?"active":"draft"}">
+            ${photo.is_published?"Sudah tayang":"Draft"}
+          </span>
+        </div>
+      </div>
+      <div class="photo-actions">
+        <button class="btn btn-danger btn-small" data-delete="${escapeHtml(photo.id)}" data-filename="${escapeHtml(photo.file_name)}">
+          Hapus Foto
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
 
-      try {
-        const email = document.getElementById("loginEmail").value.trim();
-        const password = document.getElementById("loginPassword").value;
+$("manageEvent").addEventListener("change",loadPhotos);
+$("refreshPhotosBtn").addEventListener("click",loadPhotos);
 
-        const { data, error } = await db.auth.signInWithPassword({
-          email,
-          password
-        });
+// HAPUS FOTO MELALUI EDGE FUNCTION
+$("photoList").addEventListener("click",async e=>{
+  const button=e.target.closest("[data-delete]");
+  if(!button)return;
 
-        if (error) throw error;
+  const photoId=button.dataset.delete;
+  const fileName=button.dataset.filename;
 
-        await showDashboard(data.user);
+  const confirmed=confirm(
+    'Yakin ingin menghapus foto "'+fileName+'"?\n\n'+
+    "Foto asli dan preview watermark juga akan dihapus permanen dari Storage."
+  );
 
-      } catch (error) {
-        showNotice(loginNotice, error.message, "error");
-      } finally {
-        setButtonLoading(button, false);
-      }
+  if(!confirmed)return;
+
+  setLoading(button,true,"Menghapus...");
+
+  try{
+    const {data:sessionData}=await db.auth.getSession();
+    if(!sessionData.session)throw new Error("Sesi login berakhir. Login kembali.");
+
+    const response=await fetch(DELETE_FUNCTION_URL,{
+      method:"POST",
+      headers:{
+        "Authorization":"Bearer "+sessionData.session.access_token,
+        "apikey":SUPABASE_ANON_KEY,
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({photo_id:photoId})
     });
 
-    logoutBtn.addEventListener("click", async function() {
-      await db.auth.signOut();
-      location.reload();
-    });
-
-    async function initializeAuth() {
-      const { data, error } = await db.auth.getSession();
-
-      if (error) {
-        showNotice(loginNotice, error.message, "error");
-        return;
-      }
-
-      if (data.session) {
-        try {
-          await showDashboard(data.session.user);
-        } catch (error) {
-          showNotice(loginNotice, error.message, "error");
-        }
-      }
-    }
-
-    db.auth.onAuthStateChange(function(event, session) {
-      if (event === "SIGNED_OUT") {
-        currentUser = null;
-        dashboardSection.classList.add("hidden");
-        loginSection.classList.remove("hidden");
-        logoutBtn.classList.add("hidden");
-      }
-    });
-
-    // =========================================
-    // BUAT EVENT
-    // =========================================
-
-    eventForm.addEventListener("submit", async function(event) {
-      event.preventDefault();
-      hideNotice(mainNotice);
-
-      const button = document.getElementById("createEventBtn");
-      setButtonLoading(button, true, "Membuat event...");
-
-      try {
-        const name = document.getElementById("eventName").value.trim();
-        const password = document.getElementById("eventPassword").value;
-
-        if (password.length < 6) {
-          throw new Error("Password galeri minimal 6 karakter.");
-        }
-
-        const slug = name
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "") + "-" + Date.now().toString().slice(-6);
-
-        const passwordHash = dcodeIO.bcrypt.hashSync(password, 10);
-
-        const payload = {
-          name,
-          slug,
-          event_date: document.getElementById("eventDate").value || null,
-          location: document.getElementById("eventLocation").value.trim() || null,
-          category: document.getElementById("eventCategory").value.trim() || null,
-          description: document.getElementById("eventDescription").value.trim() || null,
-          password_hash: passwordHash,
-          is_published: false
-        };
-
-        const { error } = await db
-          .from("events")
-          .insert(payload);
-
-        if (error) throw error;
-
-        eventForm.reset();
-
-        showNotice(mainNotice, "Event berhasil dibuat. Event masih berstatus draft sampai dipublikasikan.", "success");
-
-        await loadEvents();
-
-      } catch (error) {
-        showNotice(mainNotice, "Gagal membuat event: " + error.message, "error");
-      } finally {
-        setButtonLoading(button, false);
-      }
-    });
-
-    // =========================================
-    // MEMUAT EVENT
-    // =========================================
-
-    async function loadEvents() {
-      const { data, error } = await db
-        .from("events")
-        .select("id,name,slug,event_date,location,is_published,created_at")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        eventList.innerHTML =
-          '<div class="empty">Gagal memuat event: ' +
-          escapeHtml(error.message) + '</div>';
-        return;
-      }
-
-      const events = data || [];
-
-      const select = document.getElementById("uploadEvent");
-      select.innerHTML = '<option value="">Pilih event tujuan</option>';
-
-      events.forEach(function(item) {
-        const option = document.createElement("option");
-        option.value = item.id;
-        option.textContent = item.name;
-        select.appendChild(option);
-      });
-
-      if (events.length === 0) {
-        eventList.innerHTML =
-          '<div class="empty">Belum ada event. Silakan buat event terlebih dahulu.</div>';
-        return;
-      }
-
-      eventList.innerHTML = events.map(function(item) {
-        const status = item.is_published
-          ? '<span class="status active">Event aktif</span>'
-          : '<span class="status draft">Draft</span>';
-
-        return `
-          <div class="event-item">
-            <div>
-              <div class="event-name">${escapeHtml(item.name)}</div>
-              <div class="event-meta">
-                Slug: ${escapeHtml(item.slug)}<br>
-                ${escapeHtml(item.event_date || "Tanggal belum diatur")}
-                ${item.location ? " · " + escapeHtml(item.location) : ""}
-              </div>
-              ${status}
-            </div>
-
-            <div class="event-actions">
-              <button
-                class="btn btn-small"
-                type="button"
-                data-publish="${escapeHtml(item.id)}"
-                data-name="${escapeHtml(item.name)}">
-                Publikasikan Semua Foto
-              </button>
-
-              <button
-                class="btn btn-secondary btn-small"
-                type="button"
-                data-copy="${escapeHtml(item.slug)}">
-                Salin Slug
-              </button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    document.getElementById("refreshEventsBtn").addEventListener("click", loadEvents);
-
-    // =========================================
-    // PUBLIKASI SEMUA FOTO DALAM EVENT
-    // =========================================
-
-    eventList.addEventListener("click", async function(event) {
-      const publishButton = event.target.closest("[data-publish]");
-      const copyButton = event.target.closest("[data-copy]");
-
-      if (copyButton) {
-        try {
-          await navigator.clipboard.writeText(copyButton.dataset.copy);
-          showNotice(mainNotice, "Slug event berhasil disalin.", "success");
-        } catch (error) {
-          showNotice(mainNotice, "Tidak bisa menyalin slug. Slug: " + copyButton.dataset.copy, "error");
-        }
-        return;
-      }
-
-      if (!publishButton) return;
-
-      const eventId = publishButton.dataset.publish;
-      const eventName = publishButton.dataset.name;
-
-      const confirmed = confirm(
-        'Publikasikan semua foto draft pada event "' +
-        eventName +
-        '" dan aktifkan event ini?'
-      );
-
-      if (!confirmed) return;
-
-      publishButton.disabled = true;
-      publishButton.textContent = "Memublikasikan...";
-
-      try {
-        const { data, error } = await db.rpc(
-          "publish_event_photos",
-          { p_event_id: eventId }
-        );
-
-        if (error) throw error;
-
-        const count = Number(data || 0);
-
-        showNotice(
-          mainNotice,
-          count > 0
-            ? count + " foto berhasil dipublikasikan. Event sekarang aktif."
-            : "Tidak ada foto draft baru. Event sudah dipastikan aktif.",
-          "success"
-        );
-
-        await loadEvents();
-
-      } catch (error) {
-        showNotice(
-          mainNotice,
-          "Gagal mempublikasikan event: " + error.message,
-          "error"
-        );
-
-        publishButton.disabled = false;
-        publishButton.textContent = "Publikasikan Semua Foto";
-      }
-    });
-
-    // =========================================
-    // WATERMARK PERMANEN DI PREVIEW
-    // =========================================
-
-    async function createWatermarkedPreview(file) {
-      const bitmap = await createImageBitmap(file);
-
-      const MAX_WIDTH = 2000;
-      const MAX_HEIGHT = 2000;
-
-      const scale = Math.min(
-        1,
-        MAX_WIDTH / bitmap.width,
-        MAX_HEIGHT / bitmap.height
-      );
-
-      const width = Math.max(1, Math.round(bitmap.width * scale));
-      const height = Math.max(1, Math.round(bitmap.height * scale));
-
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext("2d");
-
-      if (!ctx) {
-        bitmap.close();
-        throw new Error("Browser tidak dapat memproses foto.");
-      }
-
-      ctx.drawImage(bitmap, 0, 0, width, height);
-      bitmap.close();
-
-      // Watermark berulang secara diagonal
-      ctx.save();
-
-      const fontSize = Math.max(22, Math.round(width * 0.035));
-
-      ctx.font = "800 " + fontSize + "px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      const tileWidth = fontSize * 8;
-      const tileHeight = fontSize * 4;
-
-      ctx.translate(width / 2, height / 2);
-      ctx.rotate(-Math.PI / 5);
-
-      for (
-        let y = -height * 2;
-        y < height * 2;
-        y += tileHeight
-      ) {
-        for (
-          let x = -width * 2;
-          x < width * 2;
-          x += tileWidth
-        ) {
-          ctx.fillStyle = "rgba(255,255,255,0.58)";
-          ctx.fillText("YARD FOTO", x, y);
-
-          ctx.strokeStyle = "rgba(70,35,55,0.20)";
-          ctx.lineWidth = 1;
-          ctx.strokeText("YARD FOTO", x, y);
-        }
-      }
-
-      ctx.restore();
-
-      return await new Promise(function(resolve, reject) {
-        canvas.toBlob(function(blob) {
-          if (!blob) {
-            reject(new Error("Gagal membuat preview foto."));
-            return;
-          }
-
-          resolve(
-            new File(
-              [blob],
-              file.name.replace(/\.[^.]+$/, "") + "-preview.jpg",
-              { type: "image/jpeg" }
-            )
-          );
-        }, "image/jpeg", 0.78);
-      });
-    }
-
-    // =========================================
-    // PILIH BANYAK FOTO
-    // =========================================
-
-    photoFiles.addEventListener("change", function() {
-      const files = Array.from(photoFiles.files || []);
-
-      document.getElementById("selectedFilesText").textContent =
-        files.length > 0
-          ? files.length + " foto dipilih"
-          : "Belum ada foto dipilih";
-    });
-
-    // =========================================
-    // UPLOAD SATU FOTO KE EDGE FUNCTION
-    // =========================================
-
-    async function uploadOnePhoto(file, eventId, price, accessToken) {
-      if (!file.type || file.type !== "image/jpeg") {
-        throw new Error("Format harus JPG/JPEG.");
-      }
-
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error("Ukuran foto asli melebihi 10 MB.");
-      }
-
-      const preview = await createWatermarkedPreview(file);
-
-      if (preview.size > 8 * 1024 * 1024) {
-        throw new Error("Ukuran preview melebihi 8 MB.");
-      }
-
-      const formData = new FormData();
-
-      formData.append("event_id", eventId);
-      formData.append("price", String(price));
-      formData.append("file", file, file.name);
-      formData.append("preview", preview, preview.name);
-
-      const response = await fetch(UPLOAD_FUNCTION_URL, {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer " + accessToken,
-          "apikey": SUPABASE_ANON_KEY
-        },
-        body: formData
-      });
-
-      const result = await response.json().catch(function() {
-        return {};
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          result.error ||
-          result.message ||
-          ("Upload gagal. HTTP " + response.status)
-        );
-      }
-
-      return result;
-    }
-
-    // =========================================
-    // UPLOAD BANYAK FOTO SECARA BERURUTAN
-    // =========================================
-
-    uploadForm.addEventListener("submit", async function(event) {
-      event.preventDefault();
-
-      if (isUploading) return;
-
-      hideNotice(mainNotice);
-
-      const eventId = document.getElementById("uploadEvent").value;
-      const price = Number(document.getElementById("photoPrice").value);
-      const files = Array.from(photoFiles.files || []);
-
-      if (!eventId) {
-        showNotice(mainNotice, "Silakan pilih event terlebih dahulu.", "error");
-        return;
-      }
-
-      if (files.length === 0) {
-        showNotice(mainNotice, "Silakan pilih minimal satu foto.", "error");
-        return;
-      }
-
-      if (!Number.isFinite(price) || price < 0) {
-        showNotice(mainNotice, "Harga foto tidak valid.", "error");
-        return;
-      }
-
-      const { data: sessionData, error: sessionError } =
-        await db.auth.getSession();
-
-      if (sessionError || !sessionData.session) {
-        showNotice(mainNotice, "Sesi login berakhir. Silakan login kembali.", "error");
-        return;
-      }
-
-      const accessToken = sessionData.session.access_token;
-
-      isUploading = true;
-
-      const button = document.getElementById("uploadBtn");
-      button.disabled = true;
-      button.textContent = "Sedang mengunggah...";
-
-      const progressArea = document.getElementById("uploadProgressArea");
-      const progressBar = document.getElementById("uploadProgressBar");
-      const progressText = document.getElementById("uploadProgressText");
-
-      progressArea.classList.remove("hidden");
-
-      let successCount = 0;
-      const failedFiles = [];
-
-      try {
-        for (let index = 0; index < files.length; index++) {
-          const file = files[index];
-
-          progressText.textContent =
-            "Memproses " + (index + 1) + " dari " + files.length +
-            ": " + file.name;
-
-          try {
-            await uploadOnePhoto(
-              file,
-              eventId,
-              price,
-              accessToken
-            );
-
-            successCount++;
-
-          } catch (error) {
-            failedFiles.push(file.name + ": " + error.message);
-          }
-
-          const percent = Math.round(
-            ((index + 1) / files.length) * 100
-          );
-
-          progressBar.style.width = percent + "%";
-        }
-
-        photoFiles.value = "";
-        document.getElementById("selectedFilesText").textContent =
-          "Belum ada foto dipilih";
-
-        let message =
-          successCount + " dari " + files.length +
-          " foto berhasil diunggah.\n\n" +
-          "Foto yang berhasil diunggah masih berstatus draft. " +
-          "Gunakan tombol Publikasikan Semua Foto untuk menayangkannya.";
-
-        if (failedFiles.length > 0) {
-          message += "\n\nFoto yang gagal:\n" +
-            failedFiles.join("\n");
-        }
-
-        showNotice(
-          mainNotice,
-          message,
-          failedFiles.length > 0 ? "error" : "success"
-        );
-
-        await loadEvents();
-
-      } catch (error) {
-        showNotice(mainNotice, error.message, "error");
-
-      } finally {
-        isUploading = false;
-        button.disabled = false;
-        button.textContent = "Unggah Semua Foto";
-        progressText.textContent =
-          "Selesai: " + successCount + " foto berhasil.";
-      }
-    });
-
-    // =========================================
-    // MULAI APLIKASI
-    // =========================================
-
-    initializeAuth();
-  </script>
-
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||"Gagal menghapus foto.");
+
+    showNotice($("mainNotice"),"Foto berhasil dihapus dari database dan Storage.","success");
+    await loadPhotos();
+
+  }catch(error){
+    showNotice($("mainNotice"),"Gagal menghapus foto: "+error.message,"error");
+    setLoading(button,false);
+  }
+});
+
+initializeAuth();
+</script>
 </body>
 </html>
