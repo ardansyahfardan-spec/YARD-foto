@@ -4,301 +4,387 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin | YARD FOTO</title>
+  <title>Admin Dashboard | YARD FOTO</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
 
   <style>
     :root {
-      --pink:#df5794;
-      --pink-dark:#c94380;
-      --cream:#fff8f5;
-      --ink:#30252b;
-      --muted:#8b7e85;
-      --border:#f0e3e8;
-      --green:#25865a;
-      --red:#bd3e52;
+      --pink: #e95b91;
+      --pink-dark: #cf3974;
+      --pink-light: #fff0f5;
+      --cream: #fffaf6;
+      --ink: #29232a;
+      --muted: #817780;
+      --line: #f0e5eb;
+      --white: #ffffff;
+      --green: #23865b;
+      --red: #c43e4d;
     }
 
-    * { box-sizing:border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
-      margin:0;
-      background:var(--cream);
-      color:var(--ink);
-      font-family:"DM Sans",sans-serif;
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
     }
 
-    button,input,select,textarea { font:inherit; }
-
-    button {
-      border:0;
-      cursor:pointer;
-      border-radius:12px;
-      padding:13px 18px;
-      font-weight:700;
+    button, input, textarea, select {
+      font: inherit;
     }
 
-    button:disabled {
-      opacity:.55;
-      cursor:not-allowed;
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
     }
 
-    .hidden { display:none!important; }
-    .primary { background:var(--pink); color:white; }
-    .primary:hover { background:var(--pink-dark); }
-    .secondary { background:#f8edf2; color:var(--pink-dark); }
-    .publish { background:#25865a; color:white; }
-    .publish:hover { background:#1d704b; }
-    .full { width:100%; margin-top:22px; }
-
-    .login-page {
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:24px;
+    header {
+      background: white;
+      border-bottom: 1px solid var(--line);
+      padding: 17px 0;
     }
 
-    .login-card {
-      width:100%;
-      max-width:420px;
-      background:white;
-      padding:36px;
-      border-radius:24px;
-      border:1px solid var(--border);
-      box-shadow:0 15px 50px #6b365010;
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
     }
 
     .brand {
-      font-family:Manrope,sans-serif;
-      font-size:25px;
-      font-weight:800;
-      letter-spacing:-1px;
-      margin-bottom:8px;
+      font-family: Manrope, sans-serif;
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -1px;
     }
 
-    .brand span { color:var(--pink); }
-    h1,h2,p { margin-top:0; }
-
-    .subtitle,.panel-desc {
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    .subtitle { margin-bottom:26px; }
-
-    label {
-      display:block;
-      font-size:13px;
-      font-weight:700;
-      margin:17px 0 8px;
-    }
-
-    input,select,textarea {
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:12px;
-      background:white;
-      padding:13px 14px;
-      outline:none;
-      color:var(--ink);
-    }
-
-    input:focus,select:focus,textarea:focus {
-      border-color:var(--pink);
-      box-shadow:0 0 0 3px #df579415;
-    }
-
-    .message {
-      margin-top:15px;
-      font-size:13px;
-      line-height:1.6;
-      color:var(--red);
-      white-space:pre-wrap;
-      overflow-wrap:anywhere;
-    }
-
-    .success { color:var(--green); }
-
-    .divider {
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin:22px 0 5px;
-      color:var(--muted);
-      font-size:12px;
-    }
-
-    .divider::before,.divider::after {
-      content:"";
-      height:1px;
-      background:var(--border);
-      flex:1;
-    }
-
-    .google-button {
-      width:100%;
-      margin-top:15px;
-      background:white;
-      color:#30252b;
-      border:1px solid var(--border);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:10px;
-    }
-
-    .google-button:hover { background:#fff9fb; }
-    .google-icon { width:19px; height:19px; }
-
-    header {
-      background:white;
-      border-bottom:1px solid var(--border);
-      padding:17px 5%;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:15px;
+    .brand span {
+      color: var(--pink);
     }
 
     .header-right {
-      display:flex;
-      align-items:center;
-      gap:12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .header-right small {
-      color:var(--muted);
-      overflow-wrap:anywhere;
+    .user-email {
+      font-size: 13px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
     }
 
     main {
-      width:min(1100px,92%);
-      margin:38px auto 70px;
+      padding: 35px 0 70px;
     }
 
-    .welcome { margin-bottom:28px; }
-
-    .welcome h1 {
-      font-family:Manrope,sans-serif;
-      font-size:clamp(25px,4vw,34px);
-      margin-bottom:8px;
+    .page-heading {
+      margin-bottom: 25px;
     }
 
-    .welcome p {
-      color:var(--muted);
-      font-size:14px;
+    h1, h2, h3 {
+      font-family: Manrope, sans-serif;
     }
 
-    .panel {
-      background:white;
-      border:1px solid var(--border);
-      border-radius:20px;
-      padding:25px;
-      margin-bottom:22px;
+    h1 {
+      font-size: clamp(25px, 5vw, 35px);
+      margin: 0 0 8px;
     }
 
-    .panel h2 {
-      font-family:Manrope,sans-serif;
-      font-size:19px;
-      margin-bottom:7px;
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.6;
     }
 
-    .panel-desc {
-      font-size:13px;
-      margin-bottom:20px;
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 30px rgba(80, 40, 60, .035);
     }
 
-    .form-grid {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:0 18px;
+    .card h2 {
+      font-size: 19px;
+      margin: 0 0 7px;
     }
 
-    .wide { grid-column:1/-1; }
+    .card-description {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0 0 22px;
+    }
 
-    .event-list { display:grid; gap:12px; }
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(233, 91, 145, .10);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 11px;
+      padding: 12px 18px;
+      background: var(--pink);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      background: var(--pink-dark);
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--pink-light);
+      color: var(--pink-dark);
+    }
+
+    .btn-secondary:hover {
+      background: #ffe1ec;
+    }
+
+    .btn-danger {
+      background: #fff0f0;
+      color: var(--red);
+    }
+
+    .btn-small {
+      padding: 9px 12px;
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .notice {
+      padding: 13px 15px;
+      border-radius: 11px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+      display: none;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .notice.success {
+      display: block;
+      background: #eaf8f0;
+      color: #176b45;
+    }
+
+    .notice.error {
+      display: block;
+      background: #fff0f0;
+      color: #a72d3b;
+    }
+
+    .notice.info {
+      display: block;
+      background: var(--pink-light);
+      color: var(--pink-dark);
+    }
+
+    .login-wrap {
+      width: min(420px, calc(100% - 32px));
+      margin: 70px auto;
+    }
+
+    .login-card {
+      background: white;
+      padding: 30px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      box-shadow: 0 15px 50px rgba(80, 40, 60, .07);
+    }
+
+    .login-card .brand {
+      margin-bottom: 25px;
+    }
+
+    .event-list {
+      display: grid;
+      gap: 13px;
+    }
 
     .event-item {
-      border:1px solid var(--border);
-      padding:16px;
-      border-radius:14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:15px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 17px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
     }
 
-    .event-item strong,.event-item small {
-      display:block;
-      overflow-wrap:anywhere;
+    .event-name {
+      font-weight: 800;
+      margin-bottom: 6px;
     }
 
-    .event-item strong { margin-bottom:5px; }
-
-    .event-item small {
-      color:var(--muted);
-      margin-top:3px;
+    .event-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
     }
 
     .event-actions {
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .status {
-      font-size:11px;
-      font-weight:700;
-      padding:6px 10px;
-      border-radius:20px;
-      background:#f7edf2;
-      color:var(--pink-dark);
-      white-space:nowrap;
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 9px;
+      border-radius: 20px;
+      margin-top: 8px;
     }
 
-    .status.published {
-      background:#e9f6ef;
-      color:var(--green);
+    .status.active {
+      background: #eaf8f0;
+      color: var(--green);
     }
 
-    .upload-note,.empty {
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.6;
+    .status.draft {
+      background: #fff4e4;
+      color: #9b6417;
+    }
+
+    .upload-box {
+      border: 1.5px dashed #e8b6ca;
+      border-radius: 15px;
+      padding: 22px;
+      background: #fffafd;
+    }
+
+    .upload-hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+
+    .progress-wrap {
+      height: 9px;
+      border-radius: 20px;
+      background: #f4e9ee;
+      overflow: hidden;
+      margin: 14px 0 7px;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--pink);
+      transition: width .2s;
+    }
+
+    .progress-text {
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .empty {
-      padding:20px;
-      background:#fff9fb;
-      border-radius:12px;
-      text-align:center;
+      padding: 25px;
+      text-align: center;
+      color: var(--muted);
+      background: #fffafd;
+      border-radius: 13px;
+      font-size: 13px;
     }
 
     footer {
-      text-align:center;
-      padding:25px;
-      font-size:12px;
-      color:var(--muted);
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
-    @media(max-width:650px) {
-      header { padding:15px 4%; }
-      .header-right small { display:none; }
-      main { margin-top:25px; }
-      .panel { padding:19px; }
-      .form-grid { grid-template-columns:1fr; }
-      .wide { grid-column:auto; }
-      .event-item {
-        align-items:flex-start;
-        flex-direction:column;
+    @media (max-width: 650px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0;
       }
+
+      .card {
+        padding: 19px;
+      }
+
+      .event-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
       .event-actions {
-        justify-content:flex-start;
+        justify-content: flex-start;
+      }
+
+      .user-email {
+        display: none;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
       }
     }
   </style>
@@ -306,223 +392,262 @@
 
 <body>
 
-  <section id="loginPage" class="login-page">
-    <div class="login-card">
-      <div class="brand">YARD <span>FOTO.</span></div>
-      <h1>Admin Login</h1>
-      <p class="subtitle">
-        Masuk menggunakan akun administrator YARD FOTO.
-      </p>
+  <header>
+    <div class="container header-inner">
+      <div class="brand">YARD <span>FOTO</span></div>
 
-      <form id="loginForm">
-        <label for="email">Email</label>
-        <input id="email" type="email" placeholder="admin@email.com"
-          autocomplete="username" required>
-
-        <label for="loginPassword">Password</label>
-        <input id="loginPassword" type="password"
-          placeholder="Masukkan password"
-          autocomplete="current-password" required>
-
-        <button class="primary full" id="loginButton" type="submit">
-          Masuk ke Dashboard
-        </button>
-      </form>
-
-      <div class="divider">ATAU</div>
-
-      <button class="google-button" id="googleLoginButton" type="button">
-        <svg class="google-icon" viewBox="0 0 48 48" aria-hidden="true">
-          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.75 7.18l7.73 6C44.42 38.03 46.98 31.94 46.98 24.55z"/>
-          <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/>
-          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-        </svg>
-        Login dengan Google
-      </button>
-
-      <div id="loginMessage" class="message" role="status"></div>
-    </div>
-  </section>
-
-  <section id="dashboard" class="hidden">
-    <header>
-      <div class="brand">YARD <span>FOTO.</span></div>
       <div class="header-right">
-        <small id="adminEmail"></small>
-        <button class="secondary" id="logoutButton" type="button">
+        <span class="user-email" id="userEmail"></span>
+        <button class="btn btn-secondary btn-small hidden" id="logoutBtn">
           Keluar
         </button>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <div class="welcome">
+  <section id="loginSection" class="login-wrap">
+    <div class="login-card">
+      <div class="brand">YARD <span>FOTO</span></div>
+      <h1>Admin Login</h1>
+      <p class="subtitle">Masuk untuk mengelola event dan foto.</p>
+
+      <div id="loginNotice" class="notice"></div>
+
+      <form id="loginForm" style="margin-top:24px">
+        <div class="field">
+          <label>Email</label>
+          <input id="loginEmail" type="email" required autocomplete="username">
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" type="password" required autocomplete="current-password">
+        </div>
+
+        <button class="btn" type="submit" id="loginBtn" style="width:100%">
+          Masuk Dashboard
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <main id="dashboardSection" class="hidden">
+    <div class="container">
+
+      <div class="page-heading">
         <h1>Dashboard Admin</h1>
-        <p>Kelola event dan unggah foto YARD FOTO.</p>
+        <p class="subtitle">Kelola event, unggah foto, dan publikasikan galeri YARD FOTO.</p>
       </div>
 
-      <section class="panel">
+      <div id="mainNotice" class="notice"></div>
+
+      <section class="card">
         <h2>Buat Event Baru</h2>
-        <p class="panel-desc">
-          Isi informasi event dan password untuk membuka galeri.
+        <p class="card-description">
+          Buat event dan tentukan password yang akan digunakan pengunjung untuk membuka galeri.
         </p>
 
         <form id="eventForm">
-          <div class="form-grid">
-            <div class="wide">
-              <label for="eventName">Nama Event *</label>
-              <input id="eventName" required placeholder="Contoh: Wedding Event">
-            </div>
+          <div class="field">
+            <label>Nama Event</label>
+            <input id="eventName" type="text" placeholder="Contoh: Yoga JJ Plus Saturday Event 2" required>
+          </div>
 
-            <div>
-              <label for="eventDate">Tanggal Event</label>
+          <div class="grid">
+            <div class="field">
+              <label>Tanggal Event</label>
               <input id="eventDate" type="date">
             </div>
 
-            <div>
-              <label for="eventLocation">Lokasi</label>
-              <input id="eventLocation" placeholder="Lokasi event">
-            </div>
-
-            <div>
-              <label for="eventCategory">Kategori</label>
-              <input id="eventCategory" placeholder="Contoh: Wedding">
-            </div>
-
-            <div>
-              <label for="eventPassword">Password Galeri *</label>
-              <input id="eventPassword" type="text" required
-                minlength="6" placeholder="Minimal 6 karakter">
-            </div>
-
-            <div class="wide">
-              <label for="eventDescription">Deskripsi</label>
-              <textarea id="eventDescription" rows="3"
-                placeholder="Deskripsi singkat event"></textarea>
+            <div class="field">
+              <label>Lokasi</label>
+              <input id="eventLocation" type="text" placeholder="Nama lokasi">
             </div>
           </div>
 
-          <button class="primary full" id="createEventButton" type="submit">
+          <div class="field">
+            <label>Kategori</label>
+            <input id="eventCategory" type="text" placeholder="Contoh: Sport, Wedding, Corporate">
+          </div>
+
+          <div class="field">
+            <label>Deskripsi</label>
+            <textarea id="eventDescription" placeholder="Deskripsi singkat event"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Password Galeri</label>
+            <input id="eventPassword" type="text" minlength="6" placeholder="Minimal 6 karakter" required>
+          </div>
+
+          <button class="btn" id="createEventBtn" type="submit">
             Buat Event
           </button>
         </form>
-
-        <div id="eventMessage" class="message" role="status"></div>
       </section>
 
-      <section class="panel">
-        <h2>Daftar Event</h2>
-        <p class="panel-desc">
-          Publikasikan semua foto draft sekaligus dengan mengaktifkan event.
+      <section class="card">
+        <h2>Unggah Foto</h2>
+        <p class="card-description">
+          Pilih event tujuan, kemudian pilih beberapa foto sekaligus. Preview akan diberi watermark YARD FOTO secara permanen.
         </p>
+
+        <form id="uploadForm">
+          <div class="field">
+            <label>Pilih Event</label>
+            <select id="uploadEvent" required>
+              <option value="">Memuat daftar event...</option>
+            </select>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label>Harga per Foto (Rupiah)</label>
+              <input id="photoPrice" type="number" min="0" step="1000" value="10000" required>
+            </div>
+
+            <div class="field">
+              <label>File Foto (JPG)</label>
+              <input
+                id="photoFiles"
+                type="file"
+                accept=".jpg,.jpeg,image/jpeg"
+                multiple
+                required
+              >
+            </div>
+          </div>
+
+          <div class="upload-box">
+            <strong id="selectedFilesText">Belum ada foto dipilih</strong>
+            <div class="upload-hint">
+              Bisa memilih banyak foto sekaligus.<br>
+              Format: JPG/JPEG.<br>
+              Maksimal ukuran foto asli: 10 MB per foto.<br>
+              Foto asli disimpan tanpa watermark. Preview disimpan dengan watermark permanen.
+            </div>
+          </div>
+
+          <div id="uploadProgressArea" class="hidden">
+            <div class="progress-wrap">
+              <div id="uploadProgressBar" class="progress-bar"></div>
+            </div>
+            <div id="uploadProgressText" class="progress-text"></div>
+          </div>
+
+          <div style="margin-top:18px">
+            <button class="btn" type="submit" id="uploadBtn">
+              Unggah Semua Foto
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Daftar Event</h2>
+        <p class="card-description">
+          Kelola event dan publikasikan semua foto draft dalam satu kali klik.
+        </p>
+
+        <div style="margin-bottom:17px">
+          <button class="btn btn-secondary btn-small" id="refreshEventsBtn" type="button">
+            Muat Ulang Event
+          </button>
+        </div>
 
         <div id="eventList" class="event-list">
           <div class="empty">Memuat event...</div>
         </div>
-
-        <button class="secondary" id="refreshEvents"
-          type="button" style="margin-top:16px">
-          Muat Ulang Event
-        </button>
-
-        <div id="publishMessage" class="message" role="status"></div>
       </section>
 
-      <section class="panel">
-        <h2>Upload Foto</h2>
-        <p class="panel-desc">
-          Foto asli disimpan privat. Preview dibuat dengan watermark
-          YARD FOTO langsung di browser.
-        </p>
+    </div>
+  </main>
 
-        <form id="uploadForm">
-          <label for="uploadEvent">Pilih Event *</label>
-          <select id="uploadEvent" required>
-            <option value="">Pilih event terlebih dahulu</option>
-          </select>
-
-          <label for="photoPrice">Harga Foto (Rupiah) *</label>
-          <input id="photoPrice" type="number" min="0"
-            step="1" value="0" required>
-
-          <label for="photoFiles">Pilih Foto JPG/JPEG *</label>
-          <input id="photoFiles" type="file"
-            accept=".jpg,.jpeg,image/jpeg" required>
-
-          <p class="upload-note">
-            Maksimal satu foto JPG/JPEG dengan ukuran file 10 MB.
-            Preview dibuat maksimal 2.000 piksel pada sisi terpanjang.
-            Foto akan tersimpan sebagai belum dipublikasikan.
-          </p>
-
-          <button class="primary full" id="uploadButton" type="submit">
-            Upload Foto
-          </button>
-        </form>
-
-        <div id="uploadMessage" class="message" role="status"></div>
-      </section>
-    </main>
-
-    <footer>© <span id="year"></span> YARD FOTO</footer>
-  </section>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+  <footer>YARD FOTO Admin Dashboard</footer>
 
   <script>
-    "use strict";
+    // =========================================
+    // KONFIGURASI SUPABASE
+    // =========================================
 
-    const SUPABASE_URL =
-      "https://xlhzkeqdgopqveslvglm.supabase.co";
+    const SUPABASE_URL = "https://xlhzkeqdgopqveslvglm.supabase.co";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
+    const SUPABASE_ANON_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
 
-    const UPLOAD_FUNCTION =
+    const UPLOAD_FUNCTION_URL =
       SUPABASE_URL + "/functions/v1/upload-processor";
-
-    const ADMIN_REDIRECT_URL =
-      "https://ardansyahfardan-spec.github.io/YARD-foto/admin.html";
-
-    const byId = (id) => document.getElementById(id);
 
     const db = window.supabase.createClient(
       SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
+      SUPABASE_ANON_KEY
     );
 
-    let currentAdmin = null;
-    let eventsCache = [];
+    // =========================================
+    // ELEMENT
+    // =========================================
 
-    byId("year").textContent = new Date().getFullYear();
+    const loginSection = document.getElementById("loginSection");
+    const dashboardSection = document.getElementById("dashboardSection");
+    const loginForm = document.getElementById("loginForm");
+    const loginNotice = document.getElementById("loginNotice");
+    const mainNotice = document.getElementById("mainNotice");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userEmail = document.getElementById("userEmail");
 
-    function showMessage(id, message, success = false) {
-      const node = byId(id);
-      node.textContent = message;
-      node.className = success ? "message success" : "message";
+    const eventForm = document.getElementById("eventForm");
+    const eventList = document.getElementById("eventList");
+    const uploadForm = document.getElementById("uploadForm");
+    const photoFiles = document.getElementById("photoFiles");
+
+    let currentUser = null;
+    let isUploading = false;
+
+    // =========================================
+    // NOTIFICATION
+    // =========================================
+
+    function showNotice(element, message, type = "info") {
+      element.textContent = message;
+      element.className = "notice " + type;
+      element.style.display = "block";
     }
 
-    function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
-      })[char]);
+    function hideNotice(element) {
+      element.textContent = "";
+      element.className = "notice";
+      element.style.display = "none";
     }
 
-    function slugify(value) {
-      return value.toLowerCase().normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
+    function setButtonLoading(button, loading, text) {
+      button.disabled = loading;
+      if (loading) {
+        button.dataset.originalText = button.textContent;
+        button.textContent = text || "Memproses...";
+      } else {
+        button.textContent =
+          button.dataset.originalText || button.textContent;
+      }
     }
 
-    // VERIFIKASI ADMIN
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, function(char) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[char];
+      });
+    }
+
+    // =========================================
+    // AUTH DAN CEK ADMIN
+    // =========================================
+
     async function verifyAdmin(user) {
+      if (!user) return false;
+
       const { data, error } = await db
         .from("admin_users")
         .select("user_id")
@@ -530,100 +655,255 @@
         .maybeSingle();
 
       if (error) {
-        throw new Error("Gagal memeriksa hak admin: " + error.message);
+        throw error;
       }
 
-      if (!data) {
+      return !!data;
+    }
+
+    async function showDashboard(user) {
+      const isAdmin = await verifyAdmin(user);
+
+      if (!isAdmin) {
         await db.auth.signOut();
-        throw new Error(
-          "Akun berhasil login, tetapi UID belum terdaftar di admin_users."
-        );
+        throw new Error("Akun ini tidak terdaftar sebagai admin YARD FOTO.");
       }
 
-      currentAdmin = user;
-      byId("adminEmail").textContent = user.email || "Administrator";
-      byId("loginPage").classList.add("hidden");
-      byId("dashboard").classList.remove("hidden");
+      currentUser = user;
+
+      loginSection.classList.add("hidden");
+      dashboardSection.classList.remove("hidden");
+      logoutBtn.classList.remove("hidden");
+
+      userEmail.textContent = user.email || "";
 
       await loadEvents();
     }
 
-    // MEMUAT EVENT
-    async function loadEvents() {
-      byId("eventList").innerHTML =
-        '<div class="empty">Memuat event...</div>';
+    loginForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      hideNotice(loginNotice);
 
-      const { data, error } = await db
-        .from("events")
-        .select("id,name,slug,event_date,location,is_published")
-        .order("created_at", { ascending:false });
+      const button = document.getElementById("loginBtn");
+      setButtonLoading(button, true, "Memeriksa akun...");
+
+      try {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        const { data, error } = await db.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (error) throw error;
+
+        await showDashboard(data.user);
+
+      } catch (error) {
+        showNotice(loginNotice, error.message, "error");
+      } finally {
+        setButtonLoading(button, false);
+      }
+    });
+
+    logoutBtn.addEventListener("click", async function() {
+      await db.auth.signOut();
+      location.reload();
+    });
+
+    async function initializeAuth() {
+      const { data, error } = await db.auth.getSession();
 
       if (error) {
-        byId("eventList").innerHTML =
-          '<div class="empty">Gagal memuat event: ' +
-          escapeHTML(error.message) + '</div>';
+        showNotice(loginNotice, error.message, "error");
         return;
       }
 
-      eventsCache = data || [];
+      if (data.session) {
+        try {
+          await showDashboard(data.session.user);
+        } catch (error) {
+          showNotice(loginNotice, error.message, "error");
+        }
+      }
+    }
 
-      if (!eventsCache.length) {
-        byId("eventList").innerHTML =
-          '<div class="empty">Belum ada event. Silakan buat event baru.</div>';
-      } else {
-        byId("eventList").innerHTML = eventsCache.map((item) => `
+    db.auth.onAuthStateChange(function(event, session) {
+      if (event === "SIGNED_OUT") {
+        currentUser = null;
+        dashboardSection.classList.add("hidden");
+        loginSection.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+      }
+    });
+
+    // =========================================
+    // BUAT EVENT
+    // =========================================
+
+    eventForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      hideNotice(mainNotice);
+
+      const button = document.getElementById("createEventBtn");
+      setButtonLoading(button, true, "Membuat event...");
+
+      try {
+        const name = document.getElementById("eventName").value.trim();
+        const password = document.getElementById("eventPassword").value;
+
+        if (password.length < 6) {
+          throw new Error("Password galeri minimal 6 karakter.");
+        }
+
+        const slug = name
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") + "-" + Date.now().toString().slice(-6);
+
+        const passwordHash = dcodeIO.bcrypt.hashSync(password, 10);
+
+        const payload = {
+          name,
+          slug,
+          event_date: document.getElementById("eventDate").value || null,
+          location: document.getElementById("eventLocation").value.trim() || null,
+          category: document.getElementById("eventCategory").value.trim() || null,
+          description: document.getElementById("eventDescription").value.trim() || null,
+          password_hash: passwordHash,
+          is_published: false
+        };
+
+        const { error } = await db
+          .from("events")
+          .insert(payload);
+
+        if (error) throw error;
+
+        eventForm.reset();
+
+        showNotice(mainNotice, "Event berhasil dibuat. Event masih berstatus draft sampai dipublikasikan.", "success");
+
+        await loadEvents();
+
+      } catch (error) {
+        showNotice(mainNotice, "Gagal membuat event: " + error.message, "error");
+      } finally {
+        setButtonLoading(button, false);
+      }
+    });
+
+    // =========================================
+    // MEMUAT EVENT
+    // =========================================
+
+    async function loadEvents() {
+      const { data, error } = await db
+        .from("events")
+        .select("id,name,slug,event_date,location,is_published,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        eventList.innerHTML =
+          '<div class="empty">Gagal memuat event: ' +
+          escapeHtml(error.message) + '</div>';
+        return;
+      }
+
+      const events = data || [];
+
+      const select = document.getElementById("uploadEvent");
+      select.innerHTML = '<option value="">Pilih event tujuan</option>';
+
+      events.forEach(function(item) {
+        const option = document.createElement("option");
+        option.value = item.id;
+        option.textContent = item.name;
+        select.appendChild(option);
+      });
+
+      if (events.length === 0) {
+        eventList.innerHTML =
+          '<div class="empty">Belum ada event. Silakan buat event terlebih dahulu.</div>';
+        return;
+      }
+
+      eventList.innerHTML = events.map(function(item) {
+        const status = item.is_published
+          ? '<span class="status active">Event aktif</span>'
+          : '<span class="status draft">Draft</span>';
+
+        return `
           <div class="event-item">
             <div>
-              <strong>${escapeHTML(item.name)}</strong>
-              <small>${escapeHTML(item.slug)}</small>
-              <small>${escapeHTML(item.location || "Lokasi belum diisi")}</small>
+              <div class="event-name">${escapeHtml(item.name)}</div>
+              <div class="event-meta">
+                Slug: ${escapeHtml(item.slug)}<br>
+                ${escapeHtml(item.event_date || "Tanggal belum diatur")}
+                ${item.location ? " · " + escapeHtml(item.location) : ""}
+              </div>
+              ${status}
             </div>
 
             <div class="event-actions">
-              <span class="status ${item.is_published ? "published" : ""}">
-                ${item.is_published ? "Dipublikasikan" : "Draft"}
-              </span>
+              <button
+                class="btn btn-small"
+                type="button"
+                data-publish="${escapeHtml(item.id)}"
+                data-name="${escapeHtml(item.name)}">
+                Publikasikan Semua Foto
+              </button>
 
-              ${
-                item.is_published
-                  ? '<span class="upload-note">Event sudah aktif</span>'
-                  : `<button class="publish publish-button"
-                      type="button"
-                      data-event-id="${escapeHTML(item.id)}"
-                      data-event-name="${escapeHTML(item.name)}">
-                      Publikasikan Semua Foto
-                    </button>`
-              }
+              <button
+                class="btn btn-secondary btn-small"
+                type="button"
+                data-copy="${escapeHtml(item.slug)}">
+                Salin Slug
+              </button>
             </div>
           </div>
-        `).join("");
-      }
-
-      byId("uploadEvent").innerHTML =
-        '<option value="">Pilih event terlebih dahulu</option>' +
-        eventsCache.map((item) =>
-          `<option value="${escapeHTML(item.id)}">${escapeHTML(item.name)}</option>`
-        ).join("");
+        `;
+      }).join("");
     }
 
-    // PUBLIKASIKAN SEMUA FOTO DAN EVENT
-    byId("eventList").addEventListener("click", async (event) => {
-      const button = event.target.closest(".publish-button");
-      if (!button) return;
+    document.getElementById("refreshEventsBtn").addEventListener("click", loadEvents);
 
-      const eventId = button.dataset.eventId;
-      const eventName = button.dataset.eventName;
+    // =========================================
+    // PUBLIKASI SEMUA FOTO DALAM EVENT
+    // =========================================
+
+    eventList.addEventListener("click", async function(event) {
+      const publishButton = event.target.closest("[data-publish]");
+      const copyButton = event.target.closest("[data-copy]");
+
+      if (copyButton) {
+        try {
+          await navigator.clipboard.writeText(copyButton.dataset.copy);
+          showNotice(mainNotice, "Slug event berhasil disalin.", "success");
+        } catch (error) {
+          showNotice(mainNotice, "Tidak bisa menyalin slug. Slug: " + copyButton.dataset.copy, "error");
+        }
+        return;
+      }
+
+      if (!publishButton) return;
+
+      const eventId = publishButton.dataset.publish;
+      const eventName = publishButton.dataset.name;
 
       const confirmed = confirm(
-        'Publikasikan semua foto dalam event "' + eventName +
-        '" sekaligus mengaktifkan event tersebut?'
+        'Publikasikan semua foto draft pada event "' +
+        eventName +
+        '" dan aktifkan event ini?'
       );
 
       if (!confirmed) return;
 
-      button.disabled = true;
-      button.textContent = "Memublikasikan...";
-      showMessage("publishMessage", "");
+      publishButton.disabled = true;
+      publishButton.textContent = "Memublikasikan...";
 
       try {
         const { data, error } = await db.rpc(
@@ -633,363 +913,305 @@
 
         if (error) throw error;
 
-        showMessage(
-          "publishMessage",
-          "Berhasil! " + Number(data) +
-          " foto draft berhasil dipublikasikan dan event \"" +
-          eventName + "\" sekarang aktif.",
-          true
+        const count = Number(data || 0);
+
+        showNotice(
+          mainNotice,
+          count > 0
+            ? count + " foto berhasil dipublikasikan. Event sekarang aktif."
+            : "Tidak ada foto draft baru. Event sudah dipastikan aktif.",
+          "success"
         );
 
         await loadEvents();
 
       } catch (error) {
-        showMessage(
-          "publishMessage",
-          "Gagal memublikasikan event: " +
-          (error.message || "Kesalahan tidak diketahui.")
+        showNotice(
+          mainNotice,
+          "Gagal mempublikasikan event: " + error.message,
+          "error"
         );
 
-        button.disabled = false;
-        button.textContent = "Publikasikan Semua Foto";
+        publishButton.disabled = false;
+        publishButton.textContent = "Publikasikan Semua Foto";
       }
     });
 
-    // LOGIN EMAIL DAN PASSWORD
-    byId("loginForm").addEventListener("submit", async (event) => {
+    // =========================================
+    // WATERMARK PERMANEN DI PREVIEW
+    // =========================================
+
+    async function createWatermarkedPreview(file) {
+      const bitmap = await createImageBitmap(file);
+
+      const MAX_WIDTH = 2000;
+      const MAX_HEIGHT = 2000;
+
+      const scale = Math.min(
+        1,
+        MAX_WIDTH / bitmap.width,
+        MAX_HEIGHT / bitmap.height
+      );
+
+      const width = Math.max(1, Math.round(bitmap.width * scale));
+      const height = Math.max(1, Math.round(bitmap.height * scale));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        bitmap.close();
+        throw new Error("Browser tidak dapat memproses foto.");
+      }
+
+      ctx.drawImage(bitmap, 0, 0, width, height);
+      bitmap.close();
+
+      // Watermark berulang secara diagonal
+      ctx.save();
+
+      const fontSize = Math.max(22, Math.round(width * 0.035));
+
+      ctx.font = "800 " + fontSize + "px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      const tileWidth = fontSize * 8;
+      const tileHeight = fontSize * 4;
+
+      ctx.translate(width / 2, height / 2);
+      ctx.rotate(-Math.PI / 5);
+
+      for (
+        let y = -height * 2;
+        y < height * 2;
+        y += tileHeight
+      ) {
+        for (
+          let x = -width * 2;
+          x < width * 2;
+          x += tileWidth
+        ) {
+          ctx.fillStyle = "rgba(255,255,255,0.58)";
+          ctx.fillText("YARD FOTO", x, y);
+
+          ctx.strokeStyle = "rgba(70,35,55,0.20)";
+          ctx.lineWidth = 1;
+          ctx.strokeText("YARD FOTO", x, y);
+        }
+      }
+
+      ctx.restore();
+
+      return await new Promise(function(resolve, reject) {
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            reject(new Error("Gagal membuat preview foto."));
+            return;
+          }
+
+          resolve(
+            new File(
+              [blob],
+              file.name.replace(/\.[^.]+$/, "") + "-preview.jpg",
+              { type: "image/jpeg" }
+            )
+          );
+        }, "image/jpeg", 0.78);
+      });
+    }
+
+    // =========================================
+    // PILIH BANYAK FOTO
+    // =========================================
+
+    photoFiles.addEventListener("change", function() {
+      const files = Array.from(photoFiles.files || []);
+
+      document.getElementById("selectedFilesText").textContent =
+        files.length > 0
+          ? files.length + " foto dipilih"
+          : "Belum ada foto dipilih";
+    });
+
+    // =========================================
+    // UPLOAD SATU FOTO KE EDGE FUNCTION
+    // =========================================
+
+    async function uploadOnePhoto(file, eventId, price, accessToken) {
+      if (!file.type || file.type !== "image/jpeg") {
+        throw new Error("Format harus JPG/JPEG.");
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error("Ukuran foto asli melebihi 10 MB.");
+      }
+
+      const preview = await createWatermarkedPreview(file);
+
+      if (preview.size > 8 * 1024 * 1024) {
+        throw new Error("Ukuran preview melebihi 8 MB.");
+      }
+
+      const formData = new FormData();
+
+      formData.append("event_id", eventId);
+      formData.append("price", String(price));
+      formData.append("file", file, file.name);
+      formData.append("preview", preview, preview.name);
+
+      const response = await fetch(UPLOAD_FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + accessToken,
+          "apikey": SUPABASE_ANON_KEY
+        },
+        body: formData
+      });
+
+      const result = await response.json().catch(function() {
+        return {};
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+          result.message ||
+          ("Upload gagal. HTTP " + response.status)
+        );
+      }
+
+      return result;
+    }
+
+    // =========================================
+    // UPLOAD BANYAK FOTO SECARA BERURUTAN
+    // =========================================
+
+    uploadForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
-      showMessage("loginMessage", "");
+      if (isUploading) return;
 
-      const button = byId("loginButton");
-      button.disabled = true;
-      button.textContent = "Memeriksa...";
+      hideNotice(mainNotice);
 
-      try {
-        const { data, error } = await db.auth.signInWithPassword({
-          email: byId("email").value.trim(),
-          password: byId("loginPassword").value
-        });
+      const eventId = document.getElementById("uploadEvent").value;
+      const price = Number(document.getElementById("photoPrice").value);
+      const files = Array.from(photoFiles.files || []);
 
-        if (error) throw error;
-        await verifyAdmin(data.user);
-
-      } catch (error) {
-        showMessage("loginMessage", error.message || "Login gagal.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Masuk ke Dashboard";
-      }
-    });
-
-    // LOGIN GOOGLE
-    byId("googleLoginButton").addEventListener("click", async () => {
-      const button = byId("googleLoginButton");
-      button.disabled = true;
-      button.textContent = "Menghubungkan ke Google...";
-      showMessage("loginMessage", "");
-
-      try {
-        const { error } = await db.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: ADMIN_REDIRECT_URL }
-        });
-
-        if (error) throw error;
-
-      } catch (error) {
-        showMessage("loginMessage", "Login Google gagal: " + error.message);
-        button.disabled = false;
-        button.textContent = "Login dengan Google";
-      }
-    });
-
-    // LOGOUT
-    byId("logoutButton").addEventListener("click", async () => {
-      const { error } = await db.auth.signOut();
-
-      if (error) {
-        showMessage("eventMessage", "Gagal logout: " + error.message);
+      if (!eventId) {
+        showNotice(mainNotice, "Silakan pilih event terlebih dahulu.", "error");
         return;
       }
 
-      currentAdmin = null;
-      byId("dashboard").classList.add("hidden");
-      byId("loginPage").classList.remove("hidden");
-      showMessage("loginMessage", "Kamu sudah keluar.", true);
-    });
+      if (files.length === 0) {
+        showNotice(mainNotice, "Silakan pilih minimal satu foto.", "error");
+        return;
+      }
 
-    byId("refreshEvents").addEventListener("click", loadEvents);
+      if (!Number.isFinite(price) || price < 0) {
+        showNotice(mainNotice, "Harga foto tidak valid.", "error");
+        return;
+      }
 
-    // MEMBUAT EVENT
-    byId("eventForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
+      const { data: sessionData, error: sessionError } =
+        await db.auth.getSession();
 
-      const button = byId("createEventButton");
+      if (sessionError || !sessionData.session) {
+        showNotice(mainNotice, "Sesi login berakhir. Silakan login kembali.", "error");
+        return;
+      }
+
+      const accessToken = sessionData.session.access_token;
+
+      isUploading = true;
+
+      const button = document.getElementById("uploadBtn");
       button.disabled = true;
-      button.textContent = "Membuat event...";
-      showMessage("eventMessage", "");
+      button.textContent = "Sedang mengunggah...";
+
+      const progressArea = document.getElementById("uploadProgressArea");
+      const progressBar = document.getElementById("uploadProgressBar");
+      const progressText = document.getElementById("uploadProgressText");
+
+      progressArea.classList.remove("hidden");
+
+      let successCount = 0;
+      const failedFiles = [];
 
       try {
-        const name = byId("eventName").value.trim();
-        const password = byId("eventPassword").value;
+        for (let index = 0; index < files.length; index++) {
+          const file = files[index];
 
-        if (password.length < 6) {
-          throw new Error("Password event minimal 6 karakter.");
+          progressText.textContent =
+            "Memproses " + (index + 1) + " dari " + files.length +
+            ": " + file.name;
+
+          try {
+            await uploadOnePhoto(
+              file,
+              eventId,
+              price,
+              accessToken
+            );
+
+            successCount++;
+
+          } catch (error) {
+            failedFiles.push(file.name + ": " + error.message);
+          }
+
+          const percent = Math.round(
+            ((index + 1) / files.length) * 100
+          );
+
+          progressBar.style.width = percent + "%";
         }
 
-        if (!window.dcodeIO || !window.dcodeIO.bcrypt) {
-          throw new Error("Library bcrypt belum berhasil dimuat.");
+        photoFiles.value = "";
+        document.getElementById("selectedFilesText").textContent =
+          "Belum ada foto dipilih";
+
+        let message =
+          successCount + " dari " + files.length +
+          " foto berhasil diunggah.\n\n" +
+          "Foto yang berhasil diunggah masih berstatus draft. " +
+          "Gunakan tombol Publikasikan Semua Foto untuk menayangkannya.";
+
+        if (failedFiles.length > 0) {
+          message += "\n\nFoto yang gagal:\n" +
+            failedFiles.join("\n");
         }
 
-        const baseSlug = slugify(name);
-        if (!baseSlug) throw new Error("Nama event tidak valid.");
-
-        const passwordHash =
-          await window.dcodeIO.bcrypt.hash(password, 10);
-
-        const slug =
-          baseSlug + "-" + Math.random().toString(36).slice(2, 7);
-
-        const payload = {
-          name,
-          slug,
-          event_date: byId("eventDate").value || null,
-          location: byId("eventLocation").value.trim() || null,
-          category: byId("eventCategory").value.trim() || null,
-          description: byId("eventDescription").value.trim() || null,
-          password_hash: passwordHash,
-          is_published: false
-        };
-
-        const { error } = await db.from("events").insert(payload);
-        if (error) throw error;
-
-        byId("eventForm").reset();
-
-        showMessage(
-          "eventMessage",
-          "Event berhasil dibuat. Slug: " + slug,
-          true
+        showNotice(
+          mainNotice,
+          message,
+          failedFiles.length > 0 ? "error" : "success"
         );
 
         await loadEvents();
 
       } catch (error) {
-        showMessage("eventMessage", error.message || "Gagal membuat event.");
+        showNotice(mainNotice, error.message, "error");
+
       } finally {
+        isUploading = false;
         button.disabled = false;
-        button.textContent = "Buat Event";
+        button.textContent = "Unggah Semua Foto";
+        progressText.textContent =
+          "Selesai: " + successCount + " foto berhasil.";
       }
     });
 
-    // MEMBUAT PREVIEW DAN WATERMARK
-    async function createWatermarkedPreview(file) {
-      let bitmap;
+    // =========================================
+    // MULAI APLIKASI
+    // =========================================
 
-      try {
-        bitmap = await createImageBitmap(file);
-
-        const MAX_SIDE = 2000;
-        const ratio = Math.min(
-          1,
-          MAX_SIDE / Math.max(bitmap.width, bitmap.height)
-        );
-
-        const width = Math.max(1, Math.round(bitmap.width * ratio));
-        const height = Math.max(1, Math.round(bitmap.height * ratio));
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext("2d", { alpha:false });
-
-        if (!ctx) {
-          throw new Error("Browser tidak dapat membuat preview foto.");
-        }
-
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(bitmap, 0, 0, width, height);
-
-        const fontSize = Math.max(22, Math.round(width / 28));
-        const spacingX = Math.max(220, Math.round(width * 0.34));
-        const spacingY = Math.max(150, Math.round(height * 0.25));
-
-        ctx.save();
-        ctx.translate(width / 2, height / 2);
-        ctx.rotate(-Math.PI / 4);
-
-        ctx.font = `800 ${fontSize}px Arial, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "rgba(255,255,255,0.43)";
-        ctx.strokeStyle = "rgba(35,25,30,0.24)";
-        ctx.lineWidth = Math.max(1, fontSize * 0.045);
-
-        const diagonal = Math.ceil(
-          Math.sqrt(width * width + height * height)
-        );
-
-        for (let y = -diagonal; y <= diagonal; y += spacingY) {
-          for (let x = -diagonal; x <= diagonal; x += spacingX) {
-            ctx.strokeText("YARD FOTO", x, y);
-            ctx.fillText("YARD FOTO", x, y);
-          }
-        }
-
-        ctx.restore();
-
-        const blob = await new Promise((resolve, reject) => {
-          canvas.toBlob(
-            (result) => {
-              if (result) resolve(result);
-              else reject(new Error("Gagal membuat preview JPEG."));
-            },
-            "image/jpeg",
-            0.78
-          );
-        });
-
-        if (!blob || blob.size === 0) {
-          throw new Error("File preview kosong.");
-        }
-
-        return blob;
-
-      } finally {
-        if (bitmap) bitmap.close();
-      }
-    }
-
-    // UPLOAD FOTO
-    byId("uploadForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const button = byId("uploadButton");
-      button.disabled = true;
-      showMessage("uploadMessage", "");
-
-      try {
-        const eventId = byId("uploadEvent").value;
-        const file = byId("photoFiles").files[0];
-        const price = Number(byId("photoPrice").value);
-
-        if (!eventId) throw new Error("Pilih event terlebih dahulu.");
-        if (!file) throw new Error("Pilih foto terlebih dahulu.");
-        if (file.type !== "image/jpeg") {
-          throw new Error("Gunakan foto JPG/JPEG.");
-        }
-
-        if (file.size > 10 * 1024 * 1024) {
-          throw new Error("Ukuran foto asli maksimal 10 MB.");
-        }
-
-        if (!Number.isSafeInteger(price) || price < 0) {
-          throw new Error("Harga foto tidak valid.");
-        }
-
-        const { data: sessionData, error: sessionError } =
-          await db.auth.getSession();
-
-        if (sessionError || !sessionData.session) {
-          throw new Error("Sesi login berakhir. Silakan login kembali.");
-        }
-
-        button.textContent = "Membuat preview dan watermark...";
-
-        const previewBlob = await createWatermarkedPreview(file);
-
-        if (previewBlob.size > 8 * 1024 * 1024) {
-          throw new Error("Ukuran preview terlalu besar.");
-        }
-
-        button.textContent = "Mengunggah foto ke server...";
-
-        const formData = new FormData();
-        formData.append("event_id", eventId);
-        formData.append("file", file, file.name);
-        formData.append(
-          "preview",
-          previewBlob,
-          "preview-" + file.name.replace(/\.[^.]+$/, "") + ".jpg"
-        );
-        formData.append("price", String(price));
-
-        const response = await fetch(UPLOAD_FUNCTION, {
-          method: "POST",
-          headers: {
-            "Authorization":
-              "Bearer " + sessionData.session.access_token,
-            "apikey": SUPABASE_PUBLISHABLE_KEY
-          },
-          body: formData
-        });
-
-        let result;
-        try {
-          result = await response.json();
-        } catch {
-          throw new Error("Respons server tidak dapat dibaca.");
-        }
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || "Upload gagal.");
-        }
-
-        showMessage(
-          "uploadMessage",
-          "Berhasil! Foto asli dan preview watermark sudah tersimpan.\n" +
-          "ID foto: " + result.photo_id +
-          "\nStatus: Belum dipublikasikan.",
-          true
-        );
-
-        byId("uploadForm").reset();
-
-      } catch (error) {
-        showMessage("uploadMessage", error.message || "Upload gagal.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Upload Foto";
-      }
-    });
-
-    // MEMULIHKAN SESI
-    async function restoreSession() {
-      try {
-        const { data, error } = await db.auth.getSession();
-        if (error) throw error;
-
-        if (data.session) {
-          await verifyAdmin(data.session.user);
-        }
-      } catch (error) {
-        showMessage(
-          "loginMessage",
-          error.message || "Tidak dapat memulihkan sesi login."
-        );
-      }
-    }
-
-    db.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        currentAdmin = null;
-        byId("dashboard").classList.add("hidden");
-        byId("loginPage").classList.remove("hidden");
-      }
-    });
-
-    // INITIALIZE
-    if (!window.supabase || !window.supabase.createClient) {
-      showMessage(
-        "loginMessage",
-        "Library Supabase gagal dimuat. Periksa koneksi internet."
-      );
-    } else {
-      restoreSession();
-    }
+    initializeAuth();
   </script>
+
 </body>
 </html>
