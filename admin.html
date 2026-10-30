@@ -49,6 +49,8 @@
     .primary { background:var(--pink); color:white; }
     .primary:hover { background:var(--pink-dark); }
     .secondary { background:#f8edf2; color:var(--pink-dark); }
+    .publish { background:#25865a; color:white; }
+    .publish:hover { background:#1d704b; }
     .full { width:100%; margin-top:22px; }
 
     .login-page {
@@ -241,6 +243,14 @@
       margin-top:3px;
     }
 
+    .event-actions {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
     .status {
       font-size:11px;
       font-weight:700;
@@ -249,6 +259,11 @@
       background:#f7edf2;
       color:var(--pink-dark);
       white-space:nowrap;
+    }
+
+    .status.published {
+      background:#e9f6ef;
+      color:var(--green);
     }
 
     .upload-note,.empty {
@@ -278,14 +293,19 @@
       .panel { padding:19px; }
       .form-grid { grid-template-columns:1fr; }
       .wide { grid-column:auto; }
-      .event-item { align-items:flex-start; }
+      .event-item {
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .event-actions {
+        justify-content:flex-start;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- LOGIN PAGE -->
   <section id="loginPage" class="login-page">
     <div class="login-card">
       <div class="brand">YARD <span>FOTO.</span></div>
@@ -325,8 +345,6 @@
     </div>
   </section>
 
-
-  <!-- ADMIN DASHBOARD -->
   <section id="dashboard" class="hidden">
     <header>
       <div class="brand">YARD <span>FOTO.</span></div>
@@ -344,12 +362,10 @@
         <p>Kelola event dan unggah foto YARD FOTO.</p>
       </div>
 
-      <!-- CREATE EVENT -->
       <section class="panel">
         <h2>Buat Event Baru</h2>
         <p class="panel-desc">
-          Isi informasi event dan password yang akan digunakan
-          pengunjung untuk membuka galeri.
+          Isi informasi event dan password untuk membuka galeri.
         </p>
 
         <form id="eventForm">
@@ -395,12 +411,10 @@
         <div id="eventMessage" class="message" role="status"></div>
       </section>
 
-
-      <!-- EVENT LIST -->
       <section class="panel">
         <h2>Daftar Event</h2>
         <p class="panel-desc">
-          Pilih event untuk mengunggah foto. Event baru akan berstatus draft.
+          Publikasikan semua foto draft sekaligus dengan mengaktifkan event.
         </p>
 
         <div id="eventList" class="event-list">
@@ -411,15 +425,15 @@
           type="button" style="margin-top:16px">
           Muat Ulang Event
         </button>
+
+        <div id="publishMessage" class="message" role="status"></div>
       </section>
 
-
-      <!-- UPLOAD PHOTO -->
       <section class="panel">
         <h2>Upload Foto</h2>
         <p class="panel-desc">
-          Foto asli disimpan secara privat. Preview akan diperkecil
-          dan diberi watermark YARD FOTO langsung di browser.
+          Foto asli disimpan privat. Preview dibuat dengan watermark
+          YARD FOTO langsung di browser.
         </p>
 
         <form id="uploadForm">
@@ -453,7 +467,6 @@
 
     <footer>© <span id="year"></span> YARD FOTO</footer>
   </section>
-
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
@@ -508,7 +521,6 @@
         .replace(/^-|-$/g, "");
     }
 
-
     // VERIFIKASI ADMIN
     async function verifyAdmin(user) {
       const { data, error } = await db
@@ -518,15 +530,13 @@
         .maybeSingle();
 
       if (error) {
-        throw new Error(
-          "Gagal memeriksa hak admin: " + error.message
-        );
+        throw new Error("Gagal memeriksa hak admin: " + error.message);
       }
 
       if (!data) {
         await db.auth.signOut();
         throw new Error(
-          "Akun berhasil login, tetapi UID belum terdaftar di tabel admin_users."
+          "Akun berhasil login, tetapi UID belum terdaftar di admin_users."
         );
       }
 
@@ -537,7 +547,6 @@
 
       await loadEvents();
     }
-
 
     // MEMUAT EVENT
     async function loadEvents() {
@@ -569,9 +578,23 @@
               <small>${escapeHTML(item.slug)}</small>
               <small>${escapeHTML(item.location || "Lokasi belum diisi")}</small>
             </div>
-            <span class="status">
-              ${item.is_published ? "Dipublikasikan" : "Draft"}
-            </span>
+
+            <div class="event-actions">
+              <span class="status ${item.is_published ? "published" : ""}">
+                ${item.is_published ? "Dipublikasikan" : "Draft"}
+              </span>
+
+              ${
+                item.is_published
+                  ? '<span class="upload-note">Event sudah aktif</span>'
+                  : `<button class="publish publish-button"
+                      type="button"
+                      data-event-id="${escapeHTML(item.id)}"
+                      data-event-name="${escapeHTML(item.name)}">
+                      Publikasikan Semua Foto
+                    </button>`
+              }
+            </div>
           </div>
         `).join("");
       }
@@ -583,6 +606,54 @@
         ).join("");
     }
 
+    // PUBLIKASIKAN SEMUA FOTO DAN EVENT
+    byId("eventList").addEventListener("click", async (event) => {
+      const button = event.target.closest(".publish-button");
+      if (!button) return;
+
+      const eventId = button.dataset.eventId;
+      const eventName = button.dataset.eventName;
+
+      const confirmed = confirm(
+        'Publikasikan semua foto dalam event "' + eventName +
+        '" sekaligus mengaktifkan event tersebut?'
+      );
+
+      if (!confirmed) return;
+
+      button.disabled = true;
+      button.textContent = "Memublikasikan...";
+      showMessage("publishMessage", "");
+
+      try {
+        const { data, error } = await db.rpc(
+          "publish_event_photos",
+          { p_event_id: eventId }
+        );
+
+        if (error) throw error;
+
+        showMessage(
+          "publishMessage",
+          "Berhasil! " + Number(data) +
+          " foto draft berhasil dipublikasikan dan event \"" +
+          eventName + "\" sekarang aktif.",
+          true
+        );
+
+        await loadEvents();
+
+      } catch (error) {
+        showMessage(
+          "publishMessage",
+          "Gagal memublikasikan event: " +
+          (error.message || "Kesalahan tidak diketahui.")
+        );
+
+        button.disabled = false;
+        button.textContent = "Publikasikan Semua Foto";
+      }
+    });
 
     // LOGIN EMAIL DAN PASSWORD
     byId("loginForm").addEventListener("submit", async (event) => {
@@ -602,17 +673,14 @@
 
         if (error) throw error;
         await verifyAdmin(data.user);
+
       } catch (error) {
-        showMessage(
-          "loginMessage",
-          error.message || "Login gagal. Periksa koneksi dan akun."
-        );
+        showMessage("loginMessage", error.message || "Login gagal.");
       } finally {
         button.disabled = false;
         button.textContent = "Masuk ke Dashboard";
       }
     });
-
 
     // LOGIN GOOGLE
     byId("googleLoginButton").addEventListener("click", async () => {
@@ -624,23 +692,17 @@
       try {
         const { error } = await db.auth.signInWithOAuth({
           provider: "google",
-          options: {
-            redirectTo: ADMIN_REDIRECT_URL
-          }
+          options: { redirectTo: ADMIN_REDIRECT_URL }
         });
 
         if (error) throw error;
-      } catch (error) {
-        showMessage(
-          "loginMessage",
-          "Login Google gagal: " + error.message
-        );
 
+      } catch (error) {
+        showMessage("loginMessage", "Login Google gagal: " + error.message);
         button.disabled = false;
         button.textContent = "Login dengan Google";
       }
     });
-
 
     // LOGOUT
     byId("logoutButton").addEventListener("click", async () => {
@@ -658,7 +720,6 @@
     });
 
     byId("refreshEvents").addEventListener("click", loadEvents);
-
 
     // MEMBUAT EVENT
     byId("eventForm").addEventListener("submit", async (event) => {
@@ -678,16 +739,11 @@
         }
 
         if (!window.dcodeIO || !window.dcodeIO.bcrypt) {
-          throw new Error(
-            "Library bcrypt belum berhasil dimuat. Muat ulang halaman."
-          );
+          throw new Error("Library bcrypt belum berhasil dimuat.");
         }
 
         const baseSlug = slugify(name);
-
-        if (!baseSlug) {
-          throw new Error("Nama event tidak valid.");
-        }
+        if (!baseSlug) throw new Error("Nama event tidak valid.");
 
         const passwordHash =
           await window.dcodeIO.bcrypt.hash(password, 10);
@@ -718,19 +774,16 @@
         );
 
         await loadEvents();
+
       } catch (error) {
-        showMessage(
-          "eventMessage",
-          error.message || "Gagal membuat event."
-        );
+        showMessage("eventMessage", error.message || "Gagal membuat event.");
       } finally {
         button.disabled = false;
         button.textContent = "Buat Event";
       }
     });
 
-
-    // MEMBUAT PREVIEW DAN WATERMARK DI BROWSER
+    // MEMBUAT PREVIEW DAN WATERMARK
     async function createWatermarkedPreview(file) {
       let bitmap;
 
@@ -750,20 +803,16 @@
         canvas.width = width;
         canvas.height = height;
 
-        const ctx = canvas.getContext("2d", {
-          alpha: false
-        });
+        const ctx = canvas.getContext("2d", { alpha:false });
 
         if (!ctx) {
           throw new Error("Browser tidak dapat membuat preview foto.");
         }
 
-        // Gambar foto yang sudah diperkecil.
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, width, height);
         ctx.drawImage(bitmap, 0, 0, width, height);
 
-        // Watermark diagonal berulang.
         const fontSize = Math.max(22, Math.round(width / 28));
         const spacingX = Math.max(220, Math.round(width * 0.34));
         const spacingY = Math.max(150, Math.round(height * 0.25));
@@ -792,12 +841,11 @@
 
         ctx.restore();
 
-        // Ubah preview menjadi JPEG.
         const blob = await new Promise((resolve, reject) => {
           canvas.toBlob(
             (result) => {
               if (result) resolve(result);
-              else reject(new Error("Gagal membuat file preview JPEG."));
+              else reject(new Error("Gagal membuat preview JPEG."));
             },
             "image/jpeg",
             0.78
@@ -809,11 +857,11 @@
         }
 
         return blob;
+
       } finally {
         if (bitmap) bitmap.close();
       }
     }
-
 
     // UPLOAD FOTO
     byId("uploadForm").addEventListener("submit", async (event) => {
@@ -828,14 +876,8 @@
         const file = byId("photoFiles").files[0];
         const price = Number(byId("photoPrice").value);
 
-        if (!eventId) {
-          throw new Error("Pilih event terlebih dahulu.");
-        }
-
-        if (!file) {
-          throw new Error("Pilih foto terlebih dahulu.");
-        }
-
+        if (!eventId) throw new Error("Pilih event terlebih dahulu.");
+        if (!file) throw new Error("Pilih foto terlebih dahulu.");
         if (file.type !== "image/jpeg") {
           throw new Error("Gunakan foto JPG/JPEG.");
         }
@@ -848,30 +890,21 @@
           throw new Error("Harga foto tidak valid.");
         }
 
-        // Periksa sesi admin.
-        const {
-          data: sessionData,
-          error: sessionError
-        } = await db.auth.getSession();
+        const { data: sessionData, error: sessionError } =
+          await db.auth.getSession();
 
         if (sessionError || !sessionData.session) {
-          throw new Error(
-            "Sesi login berakhir. Silakan login kembali."
-          );
+          throw new Error("Sesi login berakhir. Silakan login kembali.");
         }
 
-        // Buat preview dan watermark di browser.
         button.textContent = "Membuat preview dan watermark...";
 
         const previewBlob = await createWatermarkedPreview(file);
 
         if (previewBlob.size > 8 * 1024 * 1024) {
-          throw new Error(
-            "Ukuran preview terlalu besar. Coba gunakan foto lain."
-          );
+          throw new Error("Ukuran preview terlalu besar.");
         }
 
-        // Kirim foto asli dan preview secara terpisah.
         button.textContent = "Mengunggah foto ke server...";
 
         const formData = new FormData();
@@ -895,13 +928,10 @@
         });
 
         let result;
-
         try {
           result = await response.json();
         } catch {
-          throw new Error(
-            "Server memberikan respons yang tidak dapat dibaca. Periksa Edge Function Logs."
-          );
+          throw new Error("Respons server tidak dapat dibaca.");
         }
 
         if (!response.ok || !result.success) {
@@ -919,18 +949,14 @@
         byId("uploadForm").reset();
 
       } catch (error) {
-        showMessage(
-          "uploadMessage",
-          error.message || "Upload gagal."
-        );
+        showMessage("uploadMessage", error.message || "Upload gagal.");
       } finally {
         button.disabled = false;
         button.textContent = "Upload Foto";
       }
     });
 
-
-    // MEMULIHKAN SESI SETELAH LOGIN GOOGLE
+    // MEMULIHKAN SESI
     async function restoreSession() {
       try {
         const { data, error } = await db.auth.getSession();
@@ -947,8 +973,6 @@
       }
     }
 
-
-    // PERUBAHAN STATUS AUTH
     db.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         currentAdmin = null;
@@ -957,12 +981,11 @@
       }
     });
 
-
     // INITIALIZE
     if (!window.supabase || !window.supabase.createClient) {
       showMessage(
         "loginMessage",
-        "Library Supabase gagal dimuat. Periksa koneksi internet lalu muat ulang."
+        "Library Supabase gagal dimuat. Periksa koneksi internet."
       );
     } else {
       restoreSession();
