@@ -427,9 +427,7 @@
     // GANTI dengan Publishable Key / anon public key milik project.
     // Jangan pernah memasukkan service_role key di sini.
     const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a
-
-";
+      "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
 
     const UPLOAD_FUNCTION =
       SUPABASE_URL + "/functions/v1/upload-processor";
@@ -486,7 +484,7 @@
     }
 
     async function checkSession() {
-      if (SUPABASE_PUBLISHABLE_KEY === "TEMPEL_PUBLISHABLE_KEY_DI_SINI") {
+      if (SUPABASE_PUBLISHABLE_KEY === "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a") {
         showMessage(
           "loginMessage",
           "Publishable Key Supabase belum diisi."
