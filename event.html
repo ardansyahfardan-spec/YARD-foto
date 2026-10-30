@@ -356,7 +356,30 @@
           result.error || 'Password salah atau event tidak tersedia.'
         );
       }
+// KERANJANG YARD FOTO
+let cart = JSON.parse(localStorage.getItem('yardCart') || '[]');
 
+function updateCart() {
+  const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+
+  let cartBox = document.getElementById('yard-cart');
+
+  if (!cartBox) {
+    cartBox = document.createElement('div');
+    cartBox.id = 'yard-cart';
+    gallerySection.prepend(cartBox);
+  }
+
+  cartBox.innerHTML = `
+    <div style="background:#ffe6ef;padding:16px;border-radius:14px;margin-bottom:20px;">
+      <strong>🛒 Keranjang Foto</strong>
+      <p style="margin:8px 0;">${cart.length} foto dipilih</p>
+      <strong>Total: Rp ${total.toLocaleString('id-ID')}</strong>
+    </div>
+  `;
+
+  localStorage.setItem('yardCart', JSON.stringify(cart));
+}
       eventName.textContent = result.event.name;
 
       if (!result.photos || result.photos.length === 0) {
@@ -376,9 +399,37 @@
           caption.className = 'photo-caption';
           caption.textContent = photo.file_name || 'Foto event';
 
-          card.appendChild(img);
-          card.appendChild(caption);
-          gallery.appendChild(card);
+          const selectButton = document.createElement('button');
+selectButton.type = 'button';
+selectButton.textContent = cart.some(item => item.id === photo.id)
+  ? 'DIPILIH ✓'
+  : 'PILIH FOTO';
+
+selectButton.style.cssText =
+  'width:100%;padding:10px;margin-top:10px;border:0;border-radius:10px;background:#ef5b96;color:white;font-weight:bold;cursor:pointer;';
+
+selectButton.addEventListener('click', function() {
+  const alreadySelected = cart.some(item => item.id === photo.id);
+
+  if (alreadySelected) {
+    cart = cart.filter(item => item.id !== photo.id);
+    selectButton.textContent = 'PILIH FOTO';
+  } else {
+    cart.push({
+      id: photo.id,
+      file_name: photo.file_name || 'Foto event',
+      price: Number(photo.price || 0)
+    });
+    selectButton.textContent = 'DIPILIH ✓';
+  }
+
+  updateCart();
+});
+
+card.appendChild(img);
+card.appendChild(caption);
+card.appendChild(selectButton);
+gallery.appendChild(card);
         });
       }
 
