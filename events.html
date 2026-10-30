@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffafc">
+  <title>Daftar Event — YARD FOTO</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #ef5b96;
+      --pink-dark: #d93e7b;
+      --pink-soft: #ffe6ef;
+      --ink: #211923;
+      --muted: #77717c;
+      --cream: #fffafc;
+      --line: #eee4e9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+    }
+
+    header {
+      padding: 18px 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,250,252,.92);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .brand span { color: var(--pink); }
+
+    .back {
+      color: var(--pink-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    main {
+      width: min(1100px, 88%);
+      margin: auto;
+      padding: 65px 0 90px;
+    }
+
+    .intro { text-align: center; margin-bottom: 42px; }
+
+    .eyebrow {
+      color: var(--pink-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(32px, 6vw, 48px);
+      margin: 12px 0;
+      font-weight: 800;
+    }
+
+    h1 span { color: var(--pink); }
+
+    .intro p {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: auto;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .event-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(70,30,50,.05);
+      transition: .25s;
+    }
+
+    .event-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 35px rgba(70,30,50,.10);
+    }
+
+    .event-cover {
+      height: 190px;
+      background: linear-gradient(135deg, #ffe6ef, #f7b8d0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 42px;
+    }
+
+    .event-info { padding: 22px; }
+
+    .event-date {
+      color: var(--pink-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .event-info h2 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      margin: 9px 0;
+    }
+
+    .event-info p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .event-button {
+      display: block;
+      text-align: center;
+      background: var(--pink);
+      color: white;
+      text-decoration: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .event-button:hover { background: var(--pink-dark); }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media(max-width: 600px) {
+      main { padding-top: 45px; }
+      header { padding: 15px 6%; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <img src="assets/logo/logo-yard.png" alt="YARD FOTO">
+    <div>YARD <span>FOTO</span></div>
+  </div>
+  <a class="back" href="./welcome.html">← Kembali</a>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="eyebrow">YOUR ACTION. YOUR STORY.</div>
+    <h1>Temukan <span>Event</span> Kamu</h1>
+    <p>Pilih event yang kamu ikuti dan temukan momen terbaikmu bersama YARD FOTO.</p>
+  </section>
+
+  <section class="event-grid" id="eventGrid">
+    <article class="event-card">
+      <div class="event-cover">📸</div>
+      <div class="event-info">
+        <div class="event-date">EVENT YARD FOTO</div>
+        <h2>Yoga JJ Plus Saturday Event 1</h2>
+        <p>Temukan dan kenang kembali momen terbaik dari event ini.</p>
+        <a class="event-button" href="./event.html?slug=yoga-jj-plus-saturday-event-1">
+          LIHAT EVENT →
+        </a>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer>
+  © <span id="year"></span> YARD FOTO · YOUR MOMENT MATTERS.
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
