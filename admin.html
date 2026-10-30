@@ -1,225 +1,687 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin | YARD FOTO</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --pink:#df5794; --pink-dark:#c94380; --cream:#fff8f5;
-      --ink:#30252b; --muted:#8b7e85; --border:#f0e3e8;
-      --green:#25865a; --red:#bd3e52;
+      --pink:#df5794;
+      --pink-dark:#c94380;
+      --cream:#fff8f5;
+      --ink:#30252b;
+      --muted:#8b7e85;
+      --border:#f0e3e8;
+      --green:#25865a;
+      --red:#bd3e52;
     }
+
     * { box-sizing:border-box; }
-    body { margin:0; background:var(--cream); color:var(--ink); font-family:"DM Sans",sans-serif; }
+
+    body {
+      margin:0;
+      background:var(--cream);
+      color:var(--ink);
+      font-family:"DM Sans",sans-serif;
+    }
+
     button,input,select,textarea { font:inherit; }
-    button { border:0; cursor:pointer; border-radius:12px; padding:13px 18px; font-weight:700; }
-    button:disabled { opacity:.55; cursor:not-allowed; }
+
+    button {
+      border:0;
+      cursor:pointer;
+      border-radius:12px;
+      padding:13px 18px;
+      font-weight:700;
+    }
+
+    button:disabled {
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
     .hidden { display:none!important; }
-    .primary { background:var(--pink); color:white; }
+
+    .primary {
+      background:var(--pink);
+      color:white;
+    }
+
     .primary:hover { background:var(--pink-dark); }
-    .secondary { background:#f8edf2; color:var(--pink-dark); }
-    .full { width:100%; margin-top:22px; }
-    .login-page { min-height:100vh; display:grid; place-items:center; padding:24px; }
-    .login-card { width:100%; max-width:420px; background:white; padding:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 15px 50px #6b365010; }
-    .brand { font-family:Manrope,sans-serif; font-size:25px; font-weight:800; letter-spacing:-1px; margin-bottom:8px; }
+
+    .secondary {
+      background:#f8edf2;
+      color:var(--pink-dark);
+    }
+
+    .full {
+      width:100%;
+      margin-top:22px;
+    }
+
+    .login-page {
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .login-card {
+      width:100%;
+      max-width:420px;
+      background:white;
+      padding:36px;
+      border-radius:24px;
+      border:1px solid var(--border);
+      box-shadow:0 15px 50px #6b365010;
+    }
+
+    .brand {
+      font-family:Manrope,sans-serif;
+      font-size:25px;
+      font-weight:800;
+      letter-spacing:-1px;
+      margin-bottom:8px;
+    }
+
     .brand span { color:var(--pink); }
+
     h1,h2,p { margin-top:0; }
-    .subtitle,.panel-desc { color:var(--muted); font-size:14px; line-height:1.6; }
+
+    .subtitle,.panel-desc {
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
     .subtitle { margin-bottom:26px; }
-    label { display:block; font-size:13px; font-weight:700; margin:17px 0 8px; }
-    input,select,textarea { width:100%; border:1px solid var(--border); border-radius:12px; background:white; padding:13px 14px; outline:none; color:var(--ink); }
-    input:focus,select:focus,textarea:focus { border-color:var(--pink); box-shadow:0 0 0 3px #df579415; }
-    .message { margin-top:15px; font-size:13px; line-height:1.6; color:var(--red); white-space:pre-wrap; overflow-wrap:anywhere; }
+
+    label {
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      margin:17px 0 8px;
+    }
+
+    input,select,textarea {
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:white;
+      padding:13px 14px;
+      outline:none;
+      color:var(--ink);
+    }
+
+    input:focus,select:focus,textarea:focus {
+      border-color:var(--pink);
+      box-shadow:0 0 0 3px #df579415;
+    }
+
+    .message {
+      margin-top:15px;
+      font-size:13px;
+      line-height:1.6;
+      color:var(--red);
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+    }
+
     .success { color:var(--green); }
-    header { background:white; border-bottom:1px solid var(--border); padding:17px 5%; display:flex; justify-content:space-between; align-items:center; gap:15px; }
-    .header-right { display:flex; align-items:center; gap:12px; }
-    .header-right small { color:var(--muted); overflow-wrap:anywhere; }
-    main { width:min(1100px,92%); margin:38px auto 70px; }
+
+    .divider {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:22px 0 5px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content:"";
+      height:1px;
+      background:var(--border);
+      flex:1;
+    }
+
+    .google-button {
+      width:100%;
+      margin-top:15px;
+      background:white;
+      color:#30252b;
+      border:1px solid var(--border);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+    }
+
+    .google-button:hover { background:#fff9fb; }
+
+    .google-icon {
+      width:19px;
+      height:19px;
+    }
+
+    header {
+      background:white;
+      border-bottom:1px solid var(--border);
+      padding:17px 5%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+    }
+
+    .header-right {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .header-right small {
+      color:var(--muted);
+      overflow-wrap:anywhere;
+    }
+
+    main {
+      width:min(1100px,92%);
+      margin:38px auto 70px;
+    }
+
     .welcome { margin-bottom:28px; }
-    .welcome h1 { font-family:Manrope,sans-serif; font-size:clamp(25px,4vw,34px); margin-bottom:8px; }
-    .welcome p { color:var(--muted); font-size:14px; }
-    .panel { background:white; border:1px solid var(--border); border-radius:20px; padding:25px; margin-bottom:22px; }
-    .panel h2 { font-family:Manrope,sans-serif; font-size:19px; margin-bottom:7px; }
-    .panel-desc { font-size:13px; margin-bottom:20px; }
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+
+    .welcome h1 {
+      font-family:Manrope,sans-serif;
+      font-size:clamp(25px,4vw,34px);
+      margin-bottom:8px;
+    }
+
+    .welcome p {
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .panel {
+      background:white;
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:25px;
+      margin-bottom:22px;
+    }
+
+    .panel h2 {
+      font-family:Manrope,sans-serif;
+      font-size:19px;
+      margin-bottom:7px;
+    }
+
+    .panel-desc {
+      font-size:13px;
+      margin-bottom:20px;
+    }
+
+    .form-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:0 18px;
+    }
+
     .wide { grid-column:1/-1; }
-    .event-list { display:grid; gap:12px; }
-    .event-item { border:1px solid var(--border); padding:16px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; gap:15px; }
-    .event-item strong,.event-item small { display:block; overflow-wrap:anywhere; }
+
+    .event-list {
+      display:grid;
+      gap:12px;
+    }
+
+    .event-item {
+      border:1px solid var(--border);
+      padding:16px;
+      border-radius:14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+    }
+
+    .event-item strong,.event-item small {
+      display:block;
+      overflow-wrap:anywhere;
+    }
+
     .event-item strong { margin-bottom:5px; }
-    .event-item small { color:var(--muted); margin-top:3px; }
-    .status { font-size:11px; font-weight:700; padding:6px 10px; border-radius:20px; background:#f7edf2; color:var(--pink-dark); white-space:nowrap; }
-    .upload-note,.empty { font-size:12px; color:var(--muted); line-height:1.6; }
-    .empty { padding:20px; background:#fff9fb; border-radius:12px; text-align:center; }
-    footer { text-align:center; padding:25px; font-size:12px; color:var(--muted); }
+
+    .event-item small {
+      color:var(--muted);
+      margin-top:3px;
+    }
+
+    .status {
+      font-size:11px;
+      font-weight:700;
+      padding:6px 10px;
+      border-radius:20px;
+      background:#f7edf2;
+      color:var(--pink-dark);
+      white-space:nowrap;
+    }
+
+    .upload-note,.empty {
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .empty {
+      padding:20px;
+      background:#fff9fb;
+      border-radius:12px;
+      text-align:center;
+    }
+
+    footer {
+      text-align:center;
+      padding:25px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
     @media(max-width:650px) {
-      header { padding:15px 4%; } .header-right small { display:none; }
-      main { margin-top:25px; } .panel { padding:19px; }
-      .form-grid { grid-template-columns:1fr; } .wide { grid-column:auto; }
+      header { padding:15px 4%; }
+      .header-right small { display:none; }
+      main { margin-top:25px; }
+      .panel { padding:19px; }
+      .form-grid { grid-template-columns:1fr; }
+      .wide { grid-column:auto; }
       .event-item { align-items:flex-start; }
     }
   </style>
 </head>
+
 <body>
+
+  <!-- LOGIN PAGE -->
   <section id="loginPage" class="login-page">
     <div class="login-card">
+
       <div class="brand">YARD <span>FOTO.</span></div>
+
       <h1>Admin Login</h1>
-      <p class="subtitle">Masuk menggunakan akun administrator YARD FOTO.</p>
+
+      <p class="subtitle">
+        Masuk menggunakan akun administrator YARD FOTO.
+      </p>
+
       <form id="loginForm">
+
         <label for="email">Email</label>
-        <input id="email" type="email" placeholder="admin@email.com" autocomplete="username" required>
+        <input
+          id="email"
+          type="email"
+          placeholder="admin@email.com"
+          autocomplete="username"
+          required
+        >
+
         <label for="loginPassword">Password</label>
-        <input id="loginPassword" type="password" placeholder="Masukkan password" autocomplete="current-password" required>
-        <button class="primary full" id="loginButton" type="submit">Masuk ke Dashboard</button>
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Masukkan password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          class="primary full"
+          id="loginButton"
+          type="submit"
+        >
+          Masuk ke Dashboard
+        </button>
+
       </form>
+
+      <div class="divider">ATAU</div>
+
+      <button
+        class="google-button"
+        id="googleLoginButton"
+        type="button"
+      >
+        <svg class="google-icon" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.75 7.18l7.73 6C44.42 38.03 46.98 31.94 46.98 24.55z"/>
+          <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Login dengan Google
+      </button>
+
       <div id="loginMessage" class="message" role="status"></div>
+
     </div>
   </section>
 
+
+  <!-- ADMIN DASHBOARD -->
   <section id="dashboard" class="hidden">
+
     <header>
       <div class="brand">YARD <span>FOTO.</span></div>
+
       <div class="header-right">
         <small id="adminEmail"></small>
-        <button class="secondary" id="logoutButton" type="button">Keluar</button>
+        <button class="secondary" id="logoutButton" type="button">
+          Keluar
+        </button>
       </div>
     </header>
+
     <main>
+
       <div class="welcome">
         <h1>Dashboard Admin</h1>
         <p>Kelola event dan unggah foto YARD FOTO.</p>
       </div>
 
+
+      <!-- CREATE EVENT -->
       <section class="panel">
+
         <h2>Buat Event Baru</h2>
-        <p class="panel-desc">Isi informasi event dan password yang akan digunakan pengunjung untuk membuka galeri.</p>
+
+        <p class="panel-desc">
+          Isi informasi event dan password yang akan digunakan
+          pengunjung untuk membuka galeri.
+        </p>
+
         <form id="eventForm">
+
           <div class="form-grid">
+
             <div class="wide">
               <label for="eventName">Nama Event *</label>
-              <input id="eventName" required placeholder="Contoh: Wedding Event">
+              <input
+                id="eventName"
+                required
+                placeholder="Contoh: Wedding Event"
+              >
             </div>
+
             <div>
               <label for="eventDate">Tanggal Event</label>
               <input id="eventDate" type="date">
             </div>
+
             <div>
               <label for="eventLocation">Lokasi</label>
               <input id="eventLocation" placeholder="Lokasi event">
             </div>
+
             <div>
               <label for="eventCategory">Kategori</label>
               <input id="eventCategory" placeholder="Contoh: Wedding">
             </div>
+
             <div>
               <label for="eventPassword">Password Galeri *</label>
-              <input id="eventPassword" type="text" required minlength="6" placeholder="Minimal 6 karakter">
+              <input
+                id="eventPassword"
+                type="text"
+                required
+                minlength="6"
+                placeholder="Minimal 6 karakter"
+              >
             </div>
+
             <div class="wide">
               <label for="eventDescription">Deskripsi</label>
-              <textarea id="eventDescription" rows="3" placeholder="Deskripsi singkat event"></textarea>
+              <textarea
+                id="eventDescription"
+                rows="3"
+                placeholder="Deskripsi singkat event"
+              ></textarea>
             </div>
+
           </div>
-          <button class="primary full" id="createEventButton" type="submit">Buat Event</button>
+
+          <button
+            class="primary full"
+            id="createEventButton"
+            type="submit"
+          >
+            Buat Event
+          </button>
+
         </form>
+
         <div id="eventMessage" class="message" role="status"></div>
+
       </section>
 
+
+      <!-- EVENT LIST -->
       <section class="panel">
+
         <h2>Daftar Event</h2>
-        <p class="panel-desc">Pilih event untuk mengunggah foto. Event baru akan berstatus draft.</p>
-        <div id="eventList" class="event-list"><div class="empty">Memuat event...</div></div>
-        <button class="secondary" id="refreshEvents" type="button" style="margin-top:16px">Muat Ulang Event</button>
+
+        <p class="panel-desc">
+          Pilih event untuk mengunggah foto.
+          Event baru akan berstatus draft.
+        </p>
+
+        <div id="eventList" class="event-list">
+          <div class="empty">Memuat event...</div>
+        </div>
+
+        <button
+          class="secondary"
+          id="refreshEvents"
+          type="button"
+          style="margin-top:16px"
+        >
+          Muat Ulang Event
+        </button>
+
       </section>
 
+
+      <!-- UPLOAD PHOTO -->
       <section class="panel">
+
         <h2>Upload Foto</h2>
-        <p class="panel-desc">Foto asli disimpan secara privat. Sistem membuat preview dengan watermark YARD FOTO secara otomatis.</p>
+
+        <p class="panel-desc">
+          Foto asli disimpan secara privat.
+          Sistem membuat preview dengan watermark YARD FOTO secara otomatis.
+        </p>
+
         <form id="uploadForm">
+
           <label for="uploadEvent">Pilih Event *</label>
-          <select id="uploadEvent" required><option value="">Pilih event terlebih dahulu</option></select>
+          <select id="uploadEvent" required>
+            <option value="">Pilih event terlebih dahulu</option>
+          </select>
+
           <label for="photoPrice">Harga Foto (Rupiah) *</label>
-          <input id="photoPrice" type="number" min="0" step="1" value="0" required>
+          <input
+            id="photoPrice"
+            type="number"
+            min="0"
+            step="1"
+            value="0"
+            required
+          >
+
           <label for="photoFiles">Pilih Foto JPG/JPEG *</label>
-          <input id="photoFiles" type="file" accept=".jpg,.jpeg,image/jpeg" required>
-          <p class="upload-note">Tahap ini mendukung satu foto JPG/JPEG maksimal 10 MB. Foto akan tersimpan sebagai belum dipublikasikan.</p>
-          <button class="primary full" id="uploadButton" type="submit">Upload Foto</button>
+          <input
+            id="photoFiles"
+            type="file"
+            accept=".jpg,.jpeg,image/jpeg"
+            required
+          >
+
+          <p class="upload-note">
+            Tahap ini mendukung satu foto JPG/JPEG maksimal 10 MB.
+            Foto akan tersimpan sebagai belum dipublikasikan.
+          </p>
+
+          <button
+            class="primary full"
+            id="uploadButton"
+            type="submit"
+          >
+            Upload Foto
+          </button>
+
         </form>
+
         <div id="uploadMessage" class="message" role="status"></div>
+
       </section>
+
     </main>
+
     <footer>© <span id="year"></span> YARD FOTO</footer>
+
   </section>
 
+
+  <!-- JAVASCRIPT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+
   <script>
     "use strict";
 
-    // Publishable key adalah key publik (sb_publishable_...), bukan secret/service_role.
-    const SUPABASE_URL = "https://xlhzkeqdgopqveslvglm.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
-    const UPLOAD_FUNCTION = SUPABASE_URL + "/functions/v1/upload-processor";
+    const SUPABASE_URL =
+      "https://xlhzkeqdgopqveslvglm.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
+
+    const UPLOAD_FUNCTION =
+      SUPABASE_URL + "/functions/v1/upload-processor";
+
+    const ADMIN_REDIRECT_URL =
+      "https://ardansyahfardan-spec.github.io/YARD-foto/admin.html";
 
     const byId = (id) => document.getElementById(id);
+
     const loginForm = byId("loginForm");
-    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
     let currentAdmin = null;
     let eventsCache = [];
 
     byId("year").textContent = new Date().getFullYear();
 
+
+    // MESSAGE
     function showMessage(id, message, success = false) {
       const node = byId(id);
       node.textContent = message;
       node.className = success ? "message success" : "message";
     }
 
+
+    // HTML SECURITY
     function escapeHTML(value) {
       return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
       })[char]);
     }
 
+
+    // SLUG
     function slugify(value) {
       return value.toLowerCase().normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
     }
 
-    async function verifyAdmin(user) {
-      const { data, error } = await db.from("admin_users")
-        .select("user_id").eq("user_id", user.id).maybeSingle();
 
-      if (error) throw new Error("Gagal memeriksa hak admin: " + error.message);
-      if (!data) throw new Error("Akun berhasil login, tetapi UID belum terdaftar di tabel admin_users.");
+    // VERIFY ADMIN
+    async function verifyAdmin(user) {
+
+      const { data, error } = await db
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        throw new Error(
+          "Gagal memeriksa hak admin: " + error.message
+        );
+      }
+
+      if (!data) {
+        await db.auth.signOut();
+
+        throw new Error(
+          "Akun berhasil login, tetapi UID belum terdaftar di tabel admin_users."
+        );
+      }
 
       currentAdmin = user;
-      byId("adminEmail").textContent = user.email || "Administrator";
+
+      byId("adminEmail").textContent =
+        user.email || "Administrator";
+
       byId("loginPage").classList.add("hidden");
       byId("dashboard").classList.remove("hidden");
+
       await loadEvents();
     }
 
+
+    // LOAD EVENTS
     async function loadEvents() {
-      byId("eventList").innerHTML = '<div class="empty">Memuat event...</div>';
-      const { data, error } = await db.from("events")
+
+      byId("eventList").innerHTML =
+        '<div class="empty">Memuat event...</div>';
+
+      const { data, error } = await db
+        .from("events")
         .select("id,name,slug,event_date,location,is_published")
         .order("created_at", { ascending:false });
 
       if (error) {
-        byId("eventList").innerHTML = '<div class="empty">Gagal memuat event: ' + escapeHTML(error.message) + '</div>';
+        byId("eventList").innerHTML =
+          '<div class="empty">Gagal memuat event: ' +
+          escapeHTML(error.message) +
+          '</div>';
+
         return;
       }
 
       eventsCache = data || [];
+
       if (!eventsCache.length) {
-        byId("eventList").innerHTML = '<div class="empty">Belum ada event. Silakan buat event baru.</div>';
+
+        byId("eventList").innerHTML =
+          '<div class="empty">Belum ada event. Silakan buat event baru.</div>';
+
       } else {
+
         byId("eventList").innerHTML = eventsCache.map((item) => `
           <div class="event-item">
             <div>
@@ -227,9 +689,12 @@
               <small>${escapeHTML(item.slug)}</small>
               <small>${escapeHTML(item.location || "Lokasi belum diisi")}</small>
             </div>
-            <span class="status">${item.is_published ? "Dipublikasikan" : "Draft"}</span>
+            <span class="status">
+              ${item.is_published ? "Dipublikasikan" : "Draft"}
+            </span>
           </div>
         `).join("");
+
       }
 
       byId("uploadEvent").innerHTML =
@@ -239,56 +704,147 @@
         ).join("");
     }
 
+
+    // EMAIL AND PASSWORD LOGIN
     loginForm.addEventListener("submit", async (event) => {
+
       event.preventDefault();
+
       showMessage("loginMessage", "");
+
       const button = byId("loginButton");
+
       button.disabled = true;
       button.textContent = "Memeriksa...";
+
       try {
+
         const { data, error } = await db.auth.signInWithPassword({
           email: byId("email").value.trim(),
           password: byId("loginPassword").value
         });
+
         if (error) throw error;
+
         await verifyAdmin(data.user);
+
       } catch (error) {
-        showMessage("loginMessage", error.message || "Login gagal. Periksa koneksi dan akun.");
+
+        showMessage(
+          "loginMessage",
+          error.message || "Login gagal. Periksa koneksi dan akun."
+        );
+
       } finally {
+
         button.disabled = false;
         button.textContent = "Masuk ke Dashboard";
+
       }
+
     });
 
+
+    // GOOGLE LOGIN
+    byId("googleLoginButton").addEventListener("click", async () => {
+
+      const button = byId("googleLoginButton");
+
+      button.disabled = true;
+      button.textContent = "Menghubungkan ke Google...";
+
+      showMessage("loginMessage", "");
+
+      try {
+
+        const { error } = await db.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: ADMIN_REDIRECT_URL
+          }
+        });
+
+        if (error) throw error;
+
+        // Supabase akan mengarahkan pengguna ke Google.
+        // Setelah autentikasi, pengguna kembali ke admin.html.
+
+      } catch (error) {
+
+        showMessage(
+          "loginMessage",
+          "Login Google gagal: " + error.message
+        );
+
+        button.disabled = false;
+        button.textContent = "Login dengan Google";
+
+      }
+
+    });
+
+
+    // LOGOUT
     byId("logoutButton").addEventListener("click", async () => {
+
       await db.auth.signOut();
+
       currentAdmin = null;
+
       byId("dashboard").classList.add("hidden");
       byId("loginPage").classList.remove("hidden");
+
       showMessage("loginMessage", "Kamu sudah keluar.", true);
+
     });
 
+
+    // REFRESH EVENTS
     byId("refreshEvents").addEventListener("click", loadEvents);
 
+
+    // CREATE EVENT
     byId("eventForm").addEventListener("submit", async (event) => {
+
       event.preventDefault();
+
       const button = byId("createEventButton");
+
       button.disabled = true;
       button.textContent = "Membuat event...";
+
       showMessage("eventMessage", "");
+
       try {
+
         const name = byId("eventName").value.trim();
         const password = byId("eventPassword").value;
-        if (password.length < 6) throw new Error("Password event minimal 6 karakter.");
-        if (!window.dcodeIO || !window.dcodeIO.bcrypt) {
-          throw new Error("Library bcrypt belum berhasil dimuat. Muat ulang halaman.");
+
+        if (password.length < 6) {
+          throw new Error("Password event minimal 6 karakter.");
         }
+
+        if (!window.dcodeIO || !window.dcodeIO.bcrypt) {
+          throw new Error(
+            "Library bcrypt belum berhasil dimuat. Muat ulang halaman."
+          );
+        }
+
         const baseSlug = slugify(name);
-        if (!baseSlug) throw new Error("Nama event tidak valid.");
-        const passwordHash = await window.dcodeIO.bcrypt.hash(password, 10);
-        const slug = baseSlug + "-" + Math.random().toString(36).slice(2, 7);
+
+        if (!baseSlug) {
+          throw new Error("Nama event tidak valid.");
+        }
+
+        const passwordHash =
+          await window.dcodeIO.bcrypt.hash(password, 10);
+
+        const slug =
+          baseSlug + "-" + Math.random().toString(36).slice(2, 7);
+
         const payload = {
-          name, slug,
+          name,
+          slug,
           event_date: byId("eventDate").value || null,
           location: byId("eventLocation").value.trim() || null,
           category: byId("eventCategory").value.trim() || null,
@@ -296,53 +852,113 @@
           password_hash: passwordHash,
           is_published: false
         };
-        const { error } = await db.from("events").insert(payload);
+
+        const { error } = await db
+          .from("events")
+          .insert(payload);
+
         if (error) throw error;
+
         byId("eventForm").reset();
-        showMessage("eventMessage", "Event berhasil dibuat. Slug: " + slug, true);
+
+        showMessage(
+          "eventMessage",
+          "Event berhasil dibuat. Slug: " + slug,
+          true
+        );
+
         await loadEvents();
+
       } catch (error) {
-        showMessage("eventMessage", error.message || "Gagal membuat event.");
+
+        showMessage(
+          "eventMessage",
+          error.message || "Gagal membuat event."
+        );
+
       } finally {
+
         button.disabled = false;
         button.textContent = "Buat Event";
+
       }
+
     });
 
+
+    // UPLOAD PHOTO
     byId("uploadForm").addEventListener("submit", async (event) => {
+
       event.preventDefault();
+
       const button = byId("uploadButton");
+
       button.disabled = true;
       button.textContent = "Mengunggah dan membuat watermark...";
+
       showMessage("uploadMessage", "");
+
       try {
+
         const eventId = byId("uploadEvent").value;
         const file = byId("photoFiles").files[0];
         const price = Number(byId("photoPrice").value);
-        if (!eventId) throw new Error("Pilih event terlebih dahulu.");
-        if (!file) throw new Error("Pilih foto terlebih dahulu.");
-        if (file.type !== "image/jpeg") throw new Error("Gunakan foto JPG/JPEG.");
-        if (file.size > 10 * 1024 * 1024) throw new Error("Ukuran foto maksimal 10 MB.");
-        if (!Number.isSafeInteger(price) || price < 0) throw new Error("Harga foto tidak valid.");
 
-        const { data: sessionData, error: sessionError } = await db.auth.getSession();
-        if (sessionError || !sessionData.session) throw new Error("Sesi login berakhir. Silakan login kembali.");
+        if (!eventId) {
+          throw new Error("Pilih event terlebih dahulu.");
+        }
+
+        if (!file) {
+          throw new Error("Pilih foto terlebih dahulu.");
+        }
+
+        if (file.type !== "image/jpeg") {
+          throw new Error("Gunakan foto JPG/JPEG.");
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          throw new Error("Ukuran foto maksimal 10 MB.");
+        }
+
+        if (!Number.isSafeInteger(price) || price < 0) {
+          throw new Error("Harga foto tidak valid.");
+        }
+
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await db.auth.getSession();
+
+        if (sessionError || !sessionData.session) {
+          throw new Error(
+            "Sesi login berakhir. Silakan login kembali."
+          );
+        }
 
         const formData = new FormData();
+
         formData.append("event_id", eventId);
         formData.append("file", file);
         formData.append("price", String(price));
 
         const response = await fetch(UPLOAD_FUNCTION, {
           method:"POST",
+
           headers:{
-            "Authorization":"Bearer " + sessionData.session.access_token,
+            "Authorization":
+              "Bearer " + sessionData.session.access_token,
+
             "apikey":SUPABASE_PUBLISHABLE_KEY
           },
+
           body:formData
         });
+
         const result = await response.json();
-        if (!response.ok || !result.success) throw new Error(result.error || "Upload gagal.");
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Upload gagal.");
+        }
 
         showMessage(
           "uploadMessage",
@@ -351,30 +967,81 @@
             "\nStatus: Belum dipublikasikan.",
           true
         );
+
         byId("uploadForm").reset();
+
       } catch (error) {
-        showMessage("uploadMessage", error.message || "Upload gagal.");
+
+        showMessage(
+          "uploadMessage",
+          error.message || "Upload gagal."
+        );
+
       } finally {
+
         button.disabled = false;
         button.textContent = "Upload Foto";
+
       }
+
     });
 
+
+    // RESTORE SESSION AFTER OAUTH REDIRECT
     async function restoreSession() {
+
       try {
+
         const { data, error } = await db.auth.getSession();
+
         if (error) throw error;
-        if (data.session) await verifyAdmin(data.session.user);
+
+        if (data.session) {
+          await verifyAdmin(data.session.user);
+        }
+
       } catch (error) {
-        showMessage("loginMessage", error.message || "Tidak dapat memulihkan sesi login.");
+
+        showMessage(
+          "loginMessage",
+          error.message || "Tidak dapat memulihkan sesi login."
+        );
+
       }
+
     }
 
+
+    // AUTH STATE CHANGES
+    db.auth.onAuthStateChange((event, session) => {
+
+      if (event === "SIGNED_OUT") {
+
+        currentAdmin = null;
+
+        byId("dashboard").classList.add("hidden");
+        byId("loginPage").classList.remove("hidden");
+
+      }
+
+    });
+
+
+    // INITIALIZE
     if (!window.supabase || !window.supabase.createClient) {
-      showMessage("loginMessage", "Library Supabase gagal dimuat. Periksa koneksi internet lalu muat ulang.");
+
+      showMessage(
+        "loginMessage",
+        "Library Supabase gagal dimuat. Periksa koneksi internet lalu muat ulang."
+      );
+
     } else {
+
       restoreSession();
+
     }
+
   </script>
+
 </body>
 </html>
