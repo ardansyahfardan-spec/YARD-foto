@@ -5,104 +5,326 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login — YARD Foto</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * { box-sizing: border-box; }
+
+    :root {
+      --pink: #ef5b96;
+      --pink-dark: #d93e7b;
+      --pink-soft: #ffe6ef;
+      --ink: #211923;
+      --muted: #77717c;
+      --cream: #fffafc;
+      --line: #eee4e9;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #f4f5f7;
-      color: #202124;
+      padding: 24px;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
     }
-    .panel {
+
+    .container {
       width: 100%;
-      max-width: 400px;
-      padding: 30px;
-      border-radius: 16px;
+      max-width: 950px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       background: white;
-      box-shadow: 0 8px 30px #0000000d;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 20px 65px #51243a12;
     }
-    h1 { margin: 0 0 8px; font-size: 28px; }
-    .muted { color: #666; font-size: 14px; line-height: 1.5; }
+
+    .visual {
+      background: var(--pink-soft);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 570px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand strong {
+      font: 800 20px Manrope, sans-serif;
+    }
+
+    .brand small {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .visual-content h1 {
+      font: 800 43px/1.15 Manrope, sans-serif;
+      letter-spacing: -2px;
+      margin: 0 0 18px;
+    }
+
+    .visual-content h1 span {
+      color: var(--pink-dark);
+    }
+
+    .visual-content p {
+      color: #756775;
+      font-size: 14px;
+      line-height: 1.8;
+      max-width: 330px;
+    }
+
+    .visual-tag {
+      display: inline-block;
+      background: white;
+      padding: 13px 17px;
+      border-radius: 14px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--pink-dark);
+      width: fit-content;
+    }
+
+    .form-area {
+      padding: 55px 45px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-area h2 {
+      font: 800 29px Manrope, sans-serif;
+      letter-spacing: -1px;
+      margin: 0 0 9px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin: 0 0 28px;
+    }
+
     label {
       display: block;
-      margin: 18px 0 7px;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 18px 0 8px;
     }
+
     input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #d5d7da;
-      border-radius: 8px;
-      font-size: 15px;
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      font: 13px 'DM Sans', sans-serif;
+      background: #fffdfd;
     }
+
+    input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px var(--pink-soft);
+    }
+
     button {
       width: 100%;
-      padding: 12px;
-      margin-top: 14px;
       border: 0;
-      border-radius: 8px;
-      background: #202124;
+      border-radius: 999px;
+      padding: 15px;
+      margin-top: 22px;
+      background: var(--pink);
       color: white;
-      font-size: 15px;
+      font-size: 13px;
+      font-weight: 800;
       cursor: pointer;
+      transition: .2s;
     }
+
+    button:hover {
+      background: var(--pink-dark);
+      transform: translateY(-1px);
+    }
+
     button.secondary {
-      margin-top: 9px;
+      margin-top: 11px;
       background: white;
-      color: #202124;
-      border: 1px solid #d5d7da;
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    button:disabled { opacity: .6; cursor: wait; }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+      transform: none;
+    }
+
     #message {
-      margin-top: 16px;
-      font-size: 14px;
-      line-height: 1.5;
+      min-height: 20px;
+      font-size: 12px;
+      line-height: 1.6;
       overflow-wrap: anywhere;
+      margin-top: 17px;
     }
-    a { color: #202124; }
+
+    .switch-text {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 22px;
+    }
+
+    .switch-text button {
+      width: auto;
+      margin: 0;
+      padding: 0;
+      background: none;
+      color: var(--pink-dark);
+      font-size: 12px;
+    }
+
+    .back {
+      display: block;
+      margin-top: 25px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .back:hover { color: var(--pink-dark); }
+
+    @media(max-width: 700px) {
+      body { padding: 15px; }
+
+      .container {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+      }
+
+      .visual {
+        min-height: 210px;
+        padding: 25px;
+        gap: 25px;
+      }
+
+      .visual-content h1 {
+        font-size: 30px;
+      }
+
+      .visual-content p { font-size: 12px; }
+
+      .visual-tag { display: none; }
+
+      .form-area { padding: 30px 25px; }
+    }
   </style>
 </head>
+
 <body>
-  <main class="panel">
-    <h1>YARD Foto</h1>
-    <p class="muted" id="subtitle">
-      Masuk ke akunmu untuk melanjutkan pembelian foto.
-    </p>
 
-    <form id="authForm">
-      <label for="email">Email</label>
-      <input id="email" type="email" required
-        autocomplete="email" placeholder="nama@email.com">
+  <main class="container">
 
-      <label for="password">Kata sandi</label>
-      <input id="password" type="password" required
-        minlength="6" autocomplete="current-password"
-        placeholder="Minimal 6 karakter">
+    <section class="visual">
+      <div class="brand">
+        <img src="assets/logo/logo-yard.png" alt="YARD Foto"
+          onerror="this.style.display='none'">
+        <div>
+          <strong>YARD FOTO</strong>
+          <small>YOUR ACTION. YOUR STORY.</small>
+        </div>
+      </div>
 
-      <button id="submitBtn" type="submit">Login</button>
+      <div class="visual-content">
+        <h1>Your moment,<br><span>your story.</span></h1>
+        <p>
+          Setiap gerakan punya cerita.
+          Temukan foto terbaikmu dan simpan
+          momen yang tidak ingin kamu lupakan.
+        </p>
+      </div>
+
+      <div class="visual-tag">YOUR MOMENT MATTERS.</div>
+    </section>
+
+    <section class="form-area">
+
+      <h2 id="formTitle">Selamat datang!</h2>
+
+      <p class="subtitle" id="subtitle">
+        Masuk ke akunmu untuk melanjutkan pembelian foto.
+      </p>
+
+      <form id="authForm">
+        <label for="email">Alamat email</label>
+        <input
+          id="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="nama@email.com">
+
+        <label for="password">Kata sandi</label>
+        <input
+          id="password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="current-password"
+          placeholder="Minimal 6 karakter">
+
+        <button id="submitBtn" type="submit">Login</button>
+      </form>
+
       <button class="secondary" id="signupBtn" type="button">
         Buat akun baru
       </button>
-    </form>
 
-    <p id="message" role="status"></p>
-    <p class="muted">
-      <a href="./index.html">Kembali ke galeri</a>
-    </p>
+      <p id="message" role="status"></p>
+
+      <p class="switch-text" id="switchText">
+        Belum punya akun?
+        <button type="button" id="switchBtn">Daftar sekarang</button>
+      </p>
+
+      <a class="back" href="./index.html">
+        ← Kembali ke galeri
+      </a>
+
+    </section>
   </main>
 
   <script>
     const SUPABASE_URL =
       "https://xlhzkeqdgopqveslvglm.supabase.co";
 
-    // Gunakan publishable key yang sudah dipasang
-    // di index.html. Jangan gunakan service_role key.
+    // Masukkan publishable key yang sama dari login.html lama.
+    // Jangan gunakan service_role key.
     const SUPABASE_KEY = "sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a";
 
     const client = window.supabase.createClient(
@@ -110,92 +332,147 @@
       SUPABASE_KEY
     );
 
-    const form = document.getElementById("authForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const submitBtn = document.getElementById("submitBtn");
-    const signupBtn = document.getElementById("signupBtn");
-    const message = document.getElementById("message");
+    const $ = id => document.getElementById(id);
+
+    const form = $('authForm');
+    const emailInput = $('email');
+    const passwordInput = $('password');
+    const submitBtn = $('submitBtn');
+    const signupBtn = $('signupBtn');
+    const message = $('message');
+
+    let mode = 'login';
 
     function showMessage(text, error = false) {
       message.textContent = text;
-      message.style.color = error ? "#b42318" : "#187044";
+      message.style.color = error ? '#b42318' : '#187044';
     }
 
-    async function goToGallery() {
-      window.location.href = "./index.html";
+    function setLoading(loading) {
+      submitBtn.disabled = loading;
+      signupBtn.disabled = loading;
     }
 
-    // Jika pengguna sudah login, tidak perlu login lagi.
-    client.auth.getSession().then(({ data, error }) => {
+    function destination() {
+      const params = new URLSearchParams(window.location.search);
+
+      // Hanya izinkan tujuan checkout yang sudah ditentukan.
+      return params.get('next') === 'checkout'
+        ? './index.html?checkout=1'
+        : './index.html';
+    }
+
+    function goBackToCheckout() {
+      window.location.replace(destination());
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+
+      const isLogin = mode === 'login';
+
+      $('formTitle').textContent = isLogin
+        ? 'Selamat datang!'
+        : 'Buat akun baru';
+
+      $('subtitle').textContent = isLogin
+        ? 'Masuk ke akunmu untuk melanjutkan pembelian foto.'
+        : 'Daftar sekarang dan mulai simpan momen terbaikmu.';
+
+      submitBtn.textContent = isLogin
+        ? 'Login'
+        : 'Daftar akun';
+
+      signupBtn.style.display = isLogin ? 'block' : 'none';
+
+      $('switchText').innerHTML = isLogin
+        ? 'Belum punya akun? <button type="button" id="switchBtn">Daftar sekarang</button>'
+        : 'Sudah punya akun? <button type="button" id="switchBtn">Login</button>';
+
+      $('switchBtn').addEventListener('click', () => {
+        setMode(isLogin ? 'signup' : 'login');
+      });
+
+      passwordInput.autocomplete = isLogin
+        ? 'current-password'
+        : 'new-password';
+
+      showMessage('');
+    }
+
+    async function checkSession() {
+      const { data, error } = await client.auth.getSession();
+
       if (error) {
         showMessage(error.message, true);
-      } else if (data.session) {
-        goToGallery();
-      }
-    });
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      submitBtn.disabled = true;
-      signupBtn.disabled = true;
-      showMessage("Sedang memproses...");
-
-      try {
-        const { error } = await client.auth.signInWithPassword({
-          email: emailInput.value.trim(),
-          password: passwordInput.value
-        });
-
-        if (error) throw error;
-
-        showMessage("Login berhasil. Membuka galeri...");
-        goToGallery();
-      } catch (error) {
-        showMessage(error.message, true);
-      } finally {
-        submitBtn.disabled = false;
-        signupBtn.disabled = false;
-      }
-    });
-
-    signupBtn.addEventListener("click", async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
-
-      if (!email || !password) {
-        showMessage("Isi email dan kata sandi terlebih dahulu.", true);
         return;
       }
 
-      signupBtn.disabled = true;
-      submitBtn.disabled = true;
-      showMessage("Sedang membuat akun...");
+      if (data.session) {
+        goBackToCheckout();
+      }
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      setLoading(true);
+      showMessage('Sedang memproses...');
 
       try {
-        const { data, error } = await client.auth.signUp({
-          email,
-          password
-        });
+        if (mode === 'login') {
+          const { error } = await client.auth.signInWithPassword({
+            email,
+            password
+          });
 
-        if (error) throw error;
+          if (error) throw error;
 
-        if (data.session) {
-          showMessage("Akun berhasil dibuat. Membuka galeri...");
-          goToGallery();
+          showMessage('Login berhasil. Membuka keranjang...');
+
+          goBackToCheckout();
+
         } else {
-          showMessage(
-            "Pendaftaran berhasil dikirim. Periksa email untuk " +
-            "konfirmasi akun jika diminta, lalu login."
-          );
+          const { data, error } = await client.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: window.location.origin +
+                window.location.pathname +
+                window.location.search
+            }
+          });
+
+          if (error) throw error;
+
+          if (data.session) {
+            showMessage('Akun berhasil dibuat. Membuka keranjang...');
+            goBackToCheckout();
+          } else {
+            showMessage(
+              'Pendaftaran berhasil! Silakan periksa email untuk ' +
+              'konfirmasi akun. Setelah itu, kembali dan login.'
+            );
+          }
         }
+
       } catch (error) {
         showMessage(error.message, true);
       } finally {
-        signupBtn.disabled = false;
-        submitBtn.disabled = false;
+        setLoading(false);
       }
     });
+
+    signupBtn.addEventListener('click', () => {
+      setMode('signup');
+    });
+
+    setMode('login');
+    checkSession();
   </script>
+
 </body>
 </html>
