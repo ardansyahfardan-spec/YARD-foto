@@ -158,7 +158,6 @@
     input:focus { border-color: var(--pink); }
 
     button {
-      width: 100%;
       border: none;
       background: var(--pink);
       color: white;
@@ -172,6 +171,8 @@
 
     button:hover { background: var(--pink-dark); }
     button:disabled { opacity: .6; cursor: wait; }
+
+    #submitButton { width: 100%; }
 
     .message {
       color: var(--pink-dark);
@@ -193,6 +194,7 @@
       border-radius: 17px;
       overflow: hidden;
       box-shadow: 0 8px 25px rgba(70,30,50,.05);
+      padding-bottom: 12px;
     }
 
     .photo-card img {
@@ -208,10 +210,72 @@
       color: var(--muted);
     }
 
+    .select-photo-button {
+      width: calc(100% - 26px);
+      margin: 0 13px;
+      padding: 11px;
+      background: var(--pink);
+    }
+
+    .select-photo-button.selected {
+      background: #211923;
+    }
+
     .gallery-title {
       text-align: center;
       font-family: 'Manrope', sans-serif;
       margin-top: 45px;
+    }
+
+    #yard-cart {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 25px;
+      box-shadow: 0 8px 25px rgba(70,30,50,.05);
+    }
+
+    .cart-heading {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .cart-total {
+      display: block;
+      margin-top: 10px;
+      color: var(--pink-dark);
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .cart-item-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .remove-button {
+      flex-shrink: 0;
+      padding: 8px 12px;
+      background: var(--pink-dark);
+      font-size: 11px;
+    }
+
+    .empty-cart {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 0;
     }
 
     .hidden { display: none; }
@@ -229,6 +293,11 @@
       .event-cover { height: 200px; }
       .password-card { padding: 25px 20px; }
       main { padding-top: 35px; }
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .cart-item { align-items: flex-start; }
     }
   </style>
 </head>
@@ -280,6 +349,7 @@
 
   <section id="gallerySection" class="hidden">
     <h2 class="gallery-title">Galeri Foto Event</h2>
+    <div id="yard-cart"></div>
     <div class="gallery" id="gallery"></div>
   </section>
 
@@ -296,9 +366,8 @@
   const SUPABASE_FUNCTION_URL =
     'https://xlhzkeqdgopqveslvglm.supabase.co/functions/v1/swift-processor';
 
-  // Publishable key Supabase diperlukan untuk header apikey.
-  // Isi dengan publishable key milik project YARD FOTO.
-  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a';
+  const SUPABASE_PUBLISHABLE_KEY =
+    'sb_publishable_GYtYB62u5UtlZK_miDYbZg_SSXuhQ3a';
 
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
@@ -311,6 +380,79 @@
   const passwordCard = document.getElementById('passwordCard');
   const gallerySection = document.getElementById('gallerySection');
   const gallery = document.getElementById('gallery');
+
+  const cartKey = 'yardCart_' + (slug || 'unknown');
+  let cart = [];
+
+  try {
+    cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+    if (!Array.isArray(cart)) cart = [];
+  } catch (error) {
+    cart = [];
+  }
+
+  function updateCart() {
+    const total = cart.reduce(
+      (sum, item) => sum + Number(item.price || 0), 0
+    );
+
+    const cartBox = document.getElementById('yard-cart');
+
+    cartBox.innerHTML = `
+      <div class="cart-heading">🛒 Keranjang Foto</div>
+      <p>${cart.length} foto dipilih</p>
+      <strong class="cart-total">
+        Total: Rp ${total.toLocaleString('id-ID')}
+      </strong>
+      <div id="cartItems"></div>
+    `;
+
+    const cartItems = document.getElementById('cartItems');
+
+    if (cart.length === 0) {
+      cartItems.innerHTML =
+        '<p class="empty-cart">Belum ada foto yang dipilih.</p>';
+    } else {
+      cart.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+
+        const name = document.createElement('span');
+        name.className = 'cart-item-name';
+        name.textContent = item.file_name || 'Foto event';
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'remove-button';
+        removeButton.textContent = 'HAPUS';
+
+        removeButton.addEventListener('click', function() {
+          cart = cart.filter(
+            photo => String(photo.id) !== String(item.id)
+          );
+
+          const photoButton = gallery.querySelector(
+            '[data-photo-id="' + CSS.escape(String(item.id)) + '"]'
+          );
+
+          if (photoButton) {
+            photoButton.textContent = 'PILIH FOTO';
+            photoButton.classList.remove('selected');
+          }
+
+          updateCart();
+        });
+
+        row.appendChild(name);
+        row.appendChild(removeButton);
+        cartItems.appendChild(row);
+      });
+    }
+
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+  }
+
+  updateCart();
 
   if (!slug) {
     eventName.textContent = 'Event tidak ditemukan';
@@ -327,7 +469,8 @@
     const password = passwordInput.value.trim();
 
     if (!password) {
-      message.textContent = 'Masukkan password event terlebih dahulu.';
+      message.textContent =
+        'Masukkan password event terlebih dahulu.';
       return;
     }
 
@@ -356,30 +499,7 @@
           result.error || 'Password salah atau event tidak tersedia.'
         );
       }
-// KERANJANG YARD FOTO
-let cart = JSON.parse(localStorage.getItem('yardCart') || '[]');
 
-function updateCart() {
-  const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
-
-  let cartBox = document.getElementById('yard-cart');
-
-  if (!cartBox) {
-    cartBox = document.createElement('div');
-    cartBox.id = 'yard-cart';
-    gallerySection.prepend(cartBox);
-  }
-
-  cartBox.innerHTML = `
-    <div style="background:#ffe6ef;padding:16px;border-radius:14px;margin-bottom:20px;">
-      <strong>🛒 Keranjang Foto</strong>
-      <p style="margin:8px 0;">${cart.length} foto dipilih</p>
-      <strong>Total: Rp ${total.toLocaleString('id-ID')}</strong>
-    </div>
-  `;
-
-  localStorage.setItem('yardCart', JSON.stringify(cart));
-}
       eventName.textContent = result.event.name;
 
       if (!result.photos || result.photos.length === 0) {
@@ -400,41 +520,56 @@ function updateCart() {
           caption.textContent = photo.file_name || 'Foto event';
 
           const selectButton = document.createElement('button');
-selectButton.type = 'button';
-selectButton.textContent = cart.some(item => item.id === photo.id)
-  ? 'DIPILIH ✓'
-  : 'PILIH FOTO';
+          selectButton.type = 'button';
+          selectButton.className = 'select-photo-button';
+          selectButton.dataset.photoId = String(photo.id);
 
-selectButton.style.cssText =
-  'width:100%;padding:10px;margin-top:10px;border:0;border-radius:10px;background:#ef5b96;color:white;font-weight:bold;cursor:pointer;';
+          function refreshButton() {
+            const selected = cart.some(
+              item => String(item.id) === String(photo.id)
+            );
 
-selectButton.addEventListener('click', function() {
-  const alreadySelected = cart.some(item => item.id === photo.id);
+            selectButton.textContent = selected
+              ? 'DIPILIH ✓'
+              : 'PILIH FOTO';
 
-  if (alreadySelected) {
-    cart = cart.filter(item => item.id !== photo.id);
-    selectButton.textContent = 'PILIH FOTO';
-  } else {
-    cart.push({
-      id: photo.id,
-      file_name: photo.file_name || 'Foto event',
-      price: Number(photo.price || 0)
-    });
-    selectButton.textContent = 'DIPILIH ✓';
-  }
+            selectButton.classList.toggle('selected', selected);
+          }
 
-  updateCart();
-});
+          selectButton.addEventListener('click', function() {
+            const alreadySelected = cart.some(
+              item => String(item.id) === String(photo.id)
+            );
 
-card.appendChild(img);
-card.appendChild(caption);
-card.appendChild(selectButton);
-gallery.appendChild(card);
+            if (alreadySelected) {
+              cart = cart.filter(
+                item => String(item.id) !== String(photo.id)
+              );
+            } else {
+              cart.push({
+                id: photo.id,
+                file_name: photo.file_name || 'Foto event',
+                price: Number(photo.price || 0)
+              });
+            }
+
+            refreshButton();
+            updateCart();
+          });
+
+          refreshButton();
+
+          card.appendChild(img);
+          card.appendChild(caption);
+          card.appendChild(selectButton);
+          gallery.appendChild(card);
         });
       }
 
       passwordCard.classList.add('hidden');
       gallerySection.classList.remove('hidden');
+
+      updateCart();
 
     } catch (error) {
       message.textContent =
